@@ -558,28 +558,19 @@ class DAO
     
     
     
+    public function getLesUtilisateurAutorises($idUtilisateur) {
+
+        // si le pseudo n'est pas dans la table tracegps_utilisateurs :
+        if ( $this->existePseudoUtilisateur($pseudo) == false ) return false;
+        
+        // recherche de l'adresse mail
+        $adrMail = $this->getUnUtilisateur($pseudo)->getAdrMail();
+        
+        return $ok;
+    }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+     
     
     
     

@@ -33,9 +33,15 @@ $dao = new DAO();
 
 // test de la méthode xxxxxxxxxxxxxxxxxxxxxxxxxxx ----------------------------------------------------------
 // modifié par xxxxxxxxxxxxxxxxx le xxxxxxxxxx
-echo "<h3>Test de xxxxxxxxxxxxxxxxx : </h3>";
-// A CONTINUER .........
-
+echo "<h3> Test de getLesUtilisateursAutorises(idUtilisateur) : </h3>";
+$lesUtilisateurs = $dao-&gt;getLesUtilisateursAutorises(2);
+$nbReponses = sizeof($lesUtilisateurs);
+echo &quot;&lt;p&gt;Nombre d&#39;utilisateurs autorisés par l&#39;utilisateur 2 : &quot; . $nbReponses . &quot;&lt;/p&gt;&quot;;
+// affichage des utilisateurs
+foreach ($lesUtilisateurs as $unUtilisateur)
+{ echo ($unUtilisateur-&gt;toString());
+echo (&#39;&lt;br&gt;&#39;);
+}
 
 
 

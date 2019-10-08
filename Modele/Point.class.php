@@ -7,8 +7,6 @@
 class Point
 {
     
-    // ATTENTION : on ne met pas de balise de fin de script pour ne pas prendre le risque
-    // d'enregistrer d'espaces après la balise de fin de script !!!!!!!!!!!!
     // ------------------------------------------------------------------------------------------------------
     // ---------------------------------- Attributs protégés de la classe -----------------------------------
     // ------------------------------------------------------------------------------------------------------
@@ -16,7 +14,7 @@ class Point
     // protected au lieu de private car cette classe fera l'objet d'un héritage
     protected $latitude;			// latitude
     protected $longitude;		// longitude
-    protected $altitude;
+    protected $altitude;			// altitude
     // ------------------------------------------------------------------------------------------------------
     // ----------------------------------------- Constructeur -----------------------------------------------
     // ------------------------------------------------------------------------------------------------------
@@ -88,9 +86,8 @@ class Point
     // point2  : le second point
     // fournit : la distance (en Km) entre les 2 points
     public static function getDistance (Point $point1, Point $point2) {
-        return Point::getDistanceBetween($point1 -> getLatitude(),$point1 -> getLongitude(),$point2 -> getLatitude(),$point2 -> getLongitude());
+        // A VOUS DE TROUVER LE CODE  MANQUANT
+        // (il faut appeler la méthode précédente)
+        return Point::getDistanceBetween($point1->getLatitude(), $point1->getLongitude(), $point2->getLatitude(), $point2->getLongitude()); 
     }
-} // fin de la classe Point
-
-
-?>
+}

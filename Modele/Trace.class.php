@@ -23,13 +23,14 @@ class Trace
     // ------------------------------------------------------------------------------------------------------
     
     public function __construct($unId, $uneDateHeureDebut, $uneDateHeureFin, $terminee, $unIdUtilisateur) {
-
-    $this->id = $unId;
-    $this->dateHeureDebut = $uneDateHeureDebut;
-    $this->dateHeureFin = $uneDateHeureFin;
-    $this->terminee = $terminee;
-    $this->idUtilisateur = $unIdUtilisateur;
-    $this->lesPointsDeTrace = Array();
+        // A VOUS DE TROUVER LE CODE  MANQUANT
+        $this->id = $unId;
+        $this->dateHeureDebut = $uneDateHeureDebut;
+        $this->dateHeureFin = $uneDateHeureFin;        
+        $this->terminee = $terminee;
+        $this->idUtilisateur = $unIdUtilisateur;
+        $this->lesPointsDeTrace = Array();
+        
     }
     // ------------------------------------------------------------------------------------------------------
     // ---------------------------------------- Getters et Setters ------------------------------------------
@@ -52,6 +53,7 @@ class Trace
     
     public function getLesPointsDeTrace() {return $this->lesPointsDeTrace;}
     public function setLesPointsDeTrace($lesPointsDeTrace) {$this->lesPointsDeTrace = $lesPointsDeTrace;}
+    
     // Fournit une chaine contenant toutes les données de l'objet
     public function toString() {
         $msg = "Id : " . $this->getId() . "<br>";
@@ -82,195 +84,115 @@ class Trace
             $msg .= "   - Longitude : "  . $this->getCentre()->getLongitude() . "<br>";
             $msg .= "   - Altitude : " . $this->getCentre()->getAltitude() . "<br>";
         }
-        
-      
         return $msg;
     }
-     
-    public function getNombrePoints () {
-        return sizeof($this->lesPointsDeTrace);
-    }
-
-    public function getCentre(){
     
-        if (sizeof($this->lesPointsDeTrace) == 0)
-        {
-            return 0;
-        }
+    public function getNombrePoints() {return sizeof($this->lesPointsDeTrace);}
     
-        $colec = $this->lesPointsDeTrace;
-        $latMax=$this->lesPointsDeTrace[0]->getLatitude();
-        $lonMax=$this->lesPointsDeTrace[0]->getLongitude();
-        $latMin=$this->lesPointsDeTrace[0]->getLatitude();
-        $lonMin=$this->lesPointsDeTrace[0]->getLongitude();
-        
-        foreach ($colec as $lePoint){
-            
-            if ($lePoint->getLongitude()> $lonMax){
-                $lonMax = $lePoint->getLongitude();
-            }
-            
-            if ($lePoint->getLongitude() < $lonMin)
-            {
-                $lonMin = $lePoint->getLongitude();
-            }
-            
-            if ($lePoint->getLatitude() > $latMax)
-            {
-                $latMax = $lePoint->getLatitude();
-            }
-            
-            if ($lePoint->getLatitude() < $latMin)
-            {
-                $latMin = $lePoint->getLatitude();
-            }
-            
-        }
-        
-        $latCentre = ($latMin + $latMax)/2;
-        $lonCentre = ($lonMin + $lonMax)/2;
-        $pointCentre = new Point($latCentre,$lonCentre,0);
-        return  $pointCentre;
-    }
-    
-    public function getDenivele(){
-        
-        if (sizeof($this->lesPointsDeTrace) == 0)
-        {
-            return 0;
-        }
-        $p = $this->getLesPointsDeTrace()[0];
-        
-        $altMin = $p->getAltitude();
-        $altMax = $p->getAltitude();
-        
-        foreach ($this->getLesPointsDeTrace() as $lePoint)
-        {       
-            
-            if ($lePoint->getAltitude() > $altMax)
-            {
-                $altMax = $lePoint->getAltitude();
-            }
-            
-            if ($lePoint->getAltitude() < $altMin)
-            {
-                $altMin = $lePoint->getAltitude();
-            }
-            
-        }
-        
-        $denivele = $altMax - $altMin;
-        return $denivele;
-        
-    }
-
-    public function getDureeEnSecondes () {
-        if (sizeof($this->lesPointsDeTrace) == 0)
-        {
-            return 0;
-        }
-       
-        return strtotime($this->getDateHeureFin())- strtotime($this->getDateHeureDebut());
-    }
-    
-    public function getTempsCumuleEnChaine()
+    public function getCentre() 
     {
+        if($this->getNombrePoints() == 0) { return NULL;}
+        $unPoint = $this->lesPointsDeTrace[0];
+        $latMin = $unPoint->getLatitude();
+        $latMax = $unPoint->getLatitude();
+        $lonMin = $unPoint->getLongitude();
+        $lonMax = $unPoint->getLongitude();
         
-        $temps = $this->getDureeEnSecondes();
-        $heures = (int)$temps/3600;
-        $minutes = $temps%60%60;
-        $secondes = ($temps%3600)%60;
+        $centre = new Point(0,0,0);
         
-        return sprintf("%02d",$heures) . ":" . sprintf("%02d",$minutes) . ":" . sprintf("%02d",$secondes);
+        for ($i = 0; $i< $this->getNombrePoints(); $i++){
+            $lePoint = $this->lesPointsDeTrace[$i];
+            if ($lePoint->getLatitude()>$latMax) {$latMax = $lePoint->getLatitude();}
+            if ($lePoint->getLatitude()<$latMin) {$latMin = $lePoint->getLatitude();}
+            if ($lePoint->getLongitude()>$lonMax) {$lonMax = $lePoint->getLongitude();}
+            if ($lePoint->getLongitude()<$lonMin) {$lonMin = $lePoint->getLongitude();}
+        }
+        $centre->setLatitude(($latMin + $latMax)/2);
+        $centre->setLongitude(($lonMin + $lonMax)/2);
+        return $centre;
+            
     }
     
-    public function getDureeTotale () {
-        $temps = $this->getDureeEnSecondes();
-        $heures = $temps/3600;
-        $minutes = ($temps%3600)/60;
-        $secondes = ($temps%3600)%60;
+    public function getDenivele() 
+    {
+        $unPoint = $this->lesPointsDeTrace[0];
+        $denMin = $unPoint->getAltitude();
+        $denMax = 0;
+        for ($i = 0; $i< $this->getNombrePoints(); $i++){
+            $lePoint = $this->lesPointsDeTrace[$i];
+            if ($lePoint->getAltitude()>$denMax) {$denMax = $lePoint->getAltitude();}
+            if ($lePoint->getAltitude()<$denMax) {$denMin = $lePoint->getAltitude();}
+            
+        }
         
-        return sprintf("%02d",$heures) . ":" . sprintf("%02d",$minutes) . ":" . sprintf("%02d",$secondes);
+        return $denMax - $denMin;
     }
     
-    public function getDistanceTotale () {
+    public function getDureeEnSecondes()
+    {
+        if($this->getNombrePoints() == 0) { return 0;}
         
-        if (sizeof($this->lesPointsDeTrace)== 0){
-            return 0;
-        }
-            
-            return $this->lesPointsDeTrace[$this->getNombrePoints()-1]->getDistanceCumulee();
-        }
-
-    public function getDenivelePositif () {
-        if (sizeof($this->lesPointsDeTrace) == 0)
-        {
-            return 0;
-        }
-            
-        else
-        {
-                
-            $denivele = 0;
-                
-            for ($i = 0; $i < sizeof($this->getLesPointsDeTrace())-1; $i++)
-            {
-                $point1 = $this->getLesPointsDeTrace()[$i];
-                    
-                $point2 = $this->getLesPointsDeTrace()[$i + 1];
-                    
-                if ($point1->getAltitude() < $point2->getAltitude())
-                {
-                    $denivele += ($point2->getAltitude() - $point1->getAltitude());
-                }
-            }
-                
-            return $denivele;
-        }
- 
+        $unPoint = $this->lesPointsDeTrace[0];
+        $tempsD = strtotime($unPoint->getDateHeure());
+        $unPoint = $this->lesPointsDeTrace[$this->getNombrePoints()-1];
+        $tempsF = strtotime($unPoint->getDateHeure());
         
-} // fin de la classe Trace
-
-    public function getDeniveleNegatif () {
-        if (sizeof($this->lesPointsDeTrace) == 0)
-        {
-            return 0;
-        }
         
-        else
-        {
-            
-            $denivele = 0;
-            
-            for ($i = 0; $i < sizeof($this->getLesPointsDeTrace()) - 1; $i++)
-            {
-                $point1 = $this->getLesPointsDeTrace()[$i];
-                
-                $point2 = $this->getLesPointsDeTrace()[$i + 1];
-                
-                if ($point1->getAltitude() > $point2->getAltitude())
-                {
-                    $denivele += ($point1->getAltitude() - $point2->getAltitude());
-                }
-            }
-            
-            return $denivele;
-        }
+        return $tempsF - $tempsD;
+       
     }
-
-    public function getVitesseMoyenne () {
-        if (sizeof($this->lesPointsDeTrace) == 0)
-        {
-            return 0;
-        }
+    public function getDureeTotale()
+    {
+        $temps = $this->getDureeEnSecondes();
         
+        $heures = $temps / 3600;
+        $minutes = ($temps % 3600) / 60;
+        $secondes = ($temps % 3600) % 60;
+        return sprintf("%02d",$heures) . ":" . sprintf("%02d",$minutes) . ":" . sprintf("%02d",$secondes);
         
-        return $this->getDistanceTotale() / ($this->getDureeEnSecondes() / 3600);
     }
+    public function getDistanceTotale()
+    {
+        if($this->getNombrePoints() == 0) { return 0;}
+        
+        return $this->lesPointsDeTrace[$this->getNombrePoints()-1]->getDistanceCumulee();
+    }
+    public function getDenivelePositif()
+    {
+        if($this->getNombrePoints() == 0) { return 0;}
+        $ancienPoint = $this->lesPointsDeTrace[0]->getAltitude();
+        $denivele = 0;
+        for ($i = 0; $i< $this->getNombrePoints(); $i++){
+            $lePoint = $this->lesPointsDeTrace[$i];
+            if ($lePoint->getAltitude()>$ancienPoint) {$denivele += ($lePoint->getAltitude()- $ancienPoint);}
+            $ancienPoint = $lePoint->getAltitude();
+        }
+        return $denivele;
 
+    }
+    
+    public function getDeniveleNegatif()
+    {
+        if($this->getNombrePoints() == 0) { return 0;}
+        $ancienPoint = $this->lesPointsDeTrace[0]->getAltitude();
+        $denivele = 0;
+        for ($i = 0; $i< $this->getNombrePoints(); $i++){
+            $lePoint = $this->lesPointsDeTrace[$i];
+            if ($lePoint->getAltitude()<$ancienPoint) {$denivele -= ($lePoint->getAltitude()- $ancienPoint);}
+            $ancienPoint = $lePoint->getAltitude();
+        }
+        return $denivele;
+    }
+    
+    public function getVitesseMoyenne()
+    {
+        if($this->getNombrePoints() == 0) { return 0;}
+        return ($this->getDistanceTotale())/($this->getDureeEnSecondes()/3600);
+    }
+    
     public function AjouterPoint(PointDeTrace $unPoint)
     {
-        if($this->getNombrePoints() == 0) {
+        if($this->getNombrePoints() == 0) { 
             $unPoint->setTempsCumule(0);
             $unPoint->setDistanceCumulee(0);
             $unPoint->setVitesse(0);
@@ -278,7 +200,7 @@ class Trace
         else
         {
             $dernierPoint = $this->lesPointsDeTrace[$this->getNombrePoints() - 1];
-            
+        
             $duree = strtotime($unPoint->getDateHeure()) - strtotime($dernierPoint->getDateHeure());
             $unPoint->setDistanceCumulee($dernierPoint->getTempsCumule() + $duree);
             
@@ -293,14 +215,16 @@ class Trace
                 $vitesse = 0;
             }
             $unPoint->setVitesse($vitesse);
-        }
-        $this->lesPointsDeTrace[] = $unPoint;
+         }
+         $this->lesPointsDeTrace[] = $unPoint;
     }
-
-    public function viderListePoints() {
+    
+    public function ViderPoint()
+    {
         $this->lesPointsDeTrace = Array();
     }
     
-}
+} // fin de la classe Trace
+
 // ATTENTION : on ne met pas de balise de fin de script pour ne pas prendre le risque
 // d'enregistrer d'espaces après la balise de fin de script !!!!!!!!!!!!

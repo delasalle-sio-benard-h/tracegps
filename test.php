@@ -1,3 +1,3 @@
 <?php
-echo "bonsoir je suis boblenon" 
+//ajout du fichier par monsieur Hugo le boss et modifier par nico
 ?>

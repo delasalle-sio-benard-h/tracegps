@@ -1111,12 +1111,71 @@ class DAO
     // début de la zone attribuée au développeur 4 (xxxxxxxxxxxxxxxxxxxx) : lignes 950 à 1150
     // --------------------------------------------------------------------------------------
     
+
+    function existeAdrMailUtilisateur($uneAdr){
+        
+        // préparation de la requête de recherche
+        $txt_req = "Select count(*) from tracegps_utilisateurs where adrMail = :uneAdr";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("uneAdr", $uneAdr, PDO::PARAM_STR);
+        // exécution de la requête
+        $req->execute();
+        $nbReponses = $req->fetchColumn(0);
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        
+        // fourniture de la réponse
+        if ($nbReponses == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    
+    function supprimerUneAutorisation($idAutorisant, $idAutorise){
+        try {
+            $txt_req = "DELETE FROM autorisations WHERE idAutorisant = :autorisant AND idAutorise = :autorise";
+            
+            $req = $this->cnx->prepare($txt_req);
+            
+            $req->bindValue(":autorisant",$idAutorisant,PDO::PARAM_INT);
+            
+            $req->bindValue(":autorise",$idAutorise,PDO::PARAM_INT);
+            
+            $req->execute();
+            
+            return true;
+            
+        } catch (Exception $e) {
+            
+            return false;
+        }
+        
+        
+    }
     
     
-    
-    
-    
-    
+    function getToutesLesTraces(){
+        $txt_req = "SELECT * FROM tracegps_traces";
+        
+        $req = $this->cnx->prepare($txt_req);
+        
+        $traces = array();
+        
+        $ligne = $req->execute();
+        $ligne=$req->fetch(PDO::FETCH_OBJ);
+        
+        while($ligne){
+            $traces[]=new Trace($ligne->id, $ligne->dateDebut, $ligne->dateFin, $ligne->terminee, $ligne->idUtilisateur ,$this->getLesPointsDeTrace($ligne->id));
+            $ligne=$req->fetch(PDO::FETCH_OBJ);              
+        }
+        
+        return $traces;
+        
+    }
     
     
     

@@ -1106,16 +1106,24 @@ class DAO
 
     
     function supprimerUneAutorisation($idAutorisant, $idAutorise){
-        
-        $txt_req = "DELETE FROM autorisations WHERE idAutorisant = :autorisant AND idAutorise = :autorise";
+        try {
+            $txt_req = "DELETE FROM autorisations WHERE idAutorisant = :autorisant AND idAutorise = :autorise";
             
-        $req = $this->cnx->prepare($txt_req);
+            $req = $this->cnx->prepare($txt_req);
+            
+            $req->bindValue(":autorisant",$idAutorisant,PDO::PARAM_INT);
+            
+            $req->bindValue(":autorise",$idAutorise,PDO::PARAM_INT);
+            
+            $req->execute();
+            
+            return true;
+            
+        } catch (Exception $e) {
+            
+            return false;
+        }
         
-        $req-bindValue(":autorisant",$idAutorisant,PDO::PARAM_INT);
-        
-        $req-bindValue(":autorise",$idAutorise,PDO::PARAM_INT);
-        
-        $req->execute();
         
     }
     

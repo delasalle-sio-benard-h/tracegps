@@ -57,7 +57,7 @@ echo "<h3>Test de Benard Hugo : </h3>";
 // if ($dao->supprimerUneAutorisation(2, 1)) $ok = "oui"; else $ok = "non";
 // echo "<p>La suppression de l'autorisation de l'utilisateur 2 vers l'utilisateur 1 a réussi : <b>" . $ok . "</b><br>";
 
-
+echo $dao->getToutesLesTraces();
 
 
 

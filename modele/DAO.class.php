@@ -1128,7 +1128,25 @@ class DAO
     }
     
     
-    
+    function getToutesLesTraces(){
+        $txt_req = "SELECT * FROM tracegps_traces";
+        
+        $req = $this->cnx->prepare($txt_req);
+        
+        $traces = array();
+        
+        $ligne = $req->execute();
+        $ligne=$req->fetch();
+        
+        while($ligne){
+            $traces[]=new Trace($ligne->id, $ligne->dateDebut, $ligne->dateFin, $ligne->terminee, $ligne->unIdUtilisateur);
+            $ligne=$req->fetch();
+                        
+        }
+        
+        return $traces;
+        
+    }
     
     
     

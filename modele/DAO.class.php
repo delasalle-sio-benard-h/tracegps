@@ -1136,12 +1136,11 @@ class DAO
         $traces = array();
         
         $ligne = $req->execute();
-        $ligne=$req->fetch();
+        $ligne=$req->fetch(PDO::FETCH_OBJ);
         
         while($ligne){
-            $traces[]=new Trace($ligne->id, $ligne->dateDebut, $ligne->dateFin, $ligne->terminee, $ligne->unIdUtilisateur);
-            $ligne=$req->fetch();
-                        
+            $traces[]=new Trace($ligne->id, $ligne->dateDebut, $ligne->dateFin, $ligne->terminee, $ligne->idUtilisateur ,$this->getLesPointsDeTrace($ligne->id));
+            $ligne=$req->fetch(PDO::FETCH_OBJ);              
         }
         
         return $traces;

@@ -344,7 +344,7 @@ class DAO
     
     
     // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 1 (xxxxxxxxxxxxxxxxxxxx) : lignes 350 à 549
+    // début de la zone attribuée au développeur 1 (Thomas Verrier) : lignes 350 à 549
     // --------------------------------------------------------------------------------------
     
     public function getLesUtilisateursAutorisant($idUtilisateur){
@@ -664,7 +664,7 @@ class DAO
             
             $trace = new Trace($uneLigne->id, $uneLigne->dateDebut, $uneLigne->dateFin, $uneLigne->terminee, $uneLigne->idUtilisateur);
             
-            foreach (DAO::getLesPointsDeTrace($uneLigne->id)as $pointTrace){
+            foreach ($this->getLesPointsDeTrace($uneLigne->id)as $pointTrace){
                 $trace->AjouterPoint($pointTrace);
             }
             $lesTraces[] = $trace;
@@ -673,11 +673,26 @@ class DAO
         return $lesTraces;
     }
 
-    public function terminerUneTrace($idTrace){
-        try{
-            if ($this->)
-                
+    public function terminerUneTrace($idTrace)
+    {
+        if (sizeof($this->getLesPointsDeTrace($idTrace) != 0 ))
+        {
+            $date = $this->getLesPointsDeTrace($idTrace)[sizeof($this->getLesPointsDeTrace($idTrace)-1)];
         }
+        else 
+        {
+            $date = date("Y-m-d H:i:s");
+        }
+        // préparation de la requête
+        $txt_req = "update tracegps_trace set dateFin = :date, terminee = 1";
+        $txt_req .= " where idTrace = :idTrace";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("date", $date, PDO::PARAM_STR);
+        $req->bindValue("idTrace", $idTrace, PDO::PARAM_INT);
+        // exécution de la requête
+        $ok = $req->execute();
+        return $ok;
     }
     
      
@@ -943,7 +958,7 @@ class DAO
         
         return $lesTraces;
     }
-    }
+
     
     
     
@@ -1226,7 +1241,8 @@ class DAO
         } catch (Exception $e) {
             
             return false;
-        }}
+        }
+    }
     
     
     
@@ -1245,8 +1261,7 @@ class DAO
 
 
 
-    
- // fin de la classe DAO
+} // fin de la classe DAO
 
 // ATTENTION : on ne met pas de balise de fin de script pour ne pas prendre le risque
 // d'enregistrer d'espaces après la balise de fin de script !!!!!!!!!!!!

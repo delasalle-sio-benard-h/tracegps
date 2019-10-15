@@ -874,19 +874,49 @@ class DAO
         return true;
     }
     
-//     public function getLesTracesAutorisees($idUtilisateur) {
-//         // préparation de la requête de recherche
-//         $txt_req = "Select id, dateDebut, dateFin, terminee, idUtilisateur, pseudo, nbPoints";
-//         $txt_req .= " from tracegps_vue_traces";
-//         $txt_req .= " inner join tracegps_autorisations on idUtilisateur = idAutorisant";
-//         $txt_req .= " where idAutorise = :idUtilisateur";
-//         $txt_req .= " order by id";
+    public function getLesTracesAutorisees($idUtilisateur) {
         
-//         $req = $this->cnx->prepare($txt_req);
+        $txt_req = "Select id, dateDebut, dateFin, terminee, idUtilisateur, pseudo, nbPoints";
+        $txt_req .= " from tracegps_vue_traces";
+        $txt_req .= " inner join tracegps_autorisations on idUtilisateur = idAutorisant";
+        $txt_req .= " where idAutorise = :idUtilisateur";
+        $txt_req .= " order by id desc";
         
+        $req = $this->cnx->prepare($txt_req);
         
-    
-//     }
+        $req->bindValue("idUtilisateur", $idUtilisateur, PDO::PARAM_INT);
+        
+        $req->execute();
+        $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        
+        $lesTraces = array();
+        
+        while ($uneLigne) {
+            
+            $unId = utf8_encode($uneLigne->id);
+            $uneDateHeureDebut = utf8_encode($uneLigne->dateDebut);
+            $uneDateHeureFin = utf8_encode($uneLigne->dateFin);
+            $terminee = utf8_encode($uneLigne->terminee);
+            $unIdUtilisateur = utf8_encode($uneLigne->idUtilisateur);
+            
+            $uneTrace = new Trace($unId, $uneDateHeureDebut, $uneDateHeureFin, $terminee, $unIdUtilisateur);
+            
+            $lesPointsDeTrace = $this->getLesPointsDeTrace($unId);
+            foreach ($lesPointsDeTrace as $unPoint) {
+                $uneTrace->ajouterPoint($unPoint);
+            }
+            
+            
+            $lesTraces[] = $uneTrace;
+            
+            $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        }
+        
+        $req->closeCursor();
+        
+        return $lesTraces;
+    }
+    }
     
     
     
@@ -1108,7 +1138,7 @@ class DAO
 
 
     
-} // fin de la classe DAO
+ // fin de la classe DAO
 
 // ATTENTION : on ne met pas de balise de fin de script pour ne pas prendre le risque
 // d'enregistrer d'espaces après la balise de fin de script !!!!!!!!!!!!

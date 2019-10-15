@@ -1139,7 +1139,14 @@ class DAO
         $ligne=$req->fetch(PDO::FETCH_OBJ);
         
         while($ligne){
-            $traces[]=new Trace($ligne->id, $ligne->dateDebut, $ligne->dateFin, $ligne->terminee, $ligne->idUtilisateur ,$this->getLesPointsDeTrace($ligne->id));
+            $uneTrace = new Trace($ligne->id, $ligne->dateDebut, $ligne->dateFin, $ligne->terminee, $ligne->idUtilisateur);
+            $lesPoints = $this->getLesPointsDeTrace($ligne->id);
+            
+            foreach ($lesPoints as $unPoint){
+                $uneTrace->AjouterPoint($unPoint);
+            }
+            
+            $traces[] = $uneTrace;
             $ligne=$req->fetch(PDO::FETCH_OBJ);              
         }
         
@@ -1147,7 +1154,22 @@ class DAO
         
     }
     
-    
+    function supprimerUneTrace($idTrace) {
+        try {
+            $txt_req = "DELETE FROM tracegps_autorisations WHERE id = :idTrace ";
+            
+            $req = $this->cnx->prepare($txt_req);
+            
+            $req->bindValue(":idTrace",$idTrace,PDO::PARAM_INT);          
+            
+            $req->execute();
+            
+            return true;
+            
+        } catch (Exception $e) {
+            
+            return false;
+        }}
     
     
     

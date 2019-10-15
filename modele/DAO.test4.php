@@ -34,12 +34,52 @@ $dao = new DAO();
 // test de la méthode xxxxxxxxxxxxxxxxxxxxxxxxxxx ----------------------------------------------------------
 // modifié par xxxxxxxxxxxxxxxxx le xxxxxxxxxx
 
+echo "<h3>Test de Benard Hugo : </h3>";
+
+
 // A CONTINUER .........
 
+// // test de la méthode existeAdrMailUtilisateur ----------------------------------------------------
+// // modifié par Jim le 12/8/2018
+// echo "<h3>Test de existeAdrMailUtilisateur : </h3>";
+// if ($dao->existeAdrMailUtilisateur("admin@gmail.com")) $existe = "oui"; else $existe = "non";
+// echo "<p>Existence de l'utilisateur 'admin@gmail.com' : <b>" . $existe . "</b><br>";
+// if ($dao->existeAdrMailUtilisateur("delasalle.sio.benard.h@gmail.com")) $existe = "oui"; else $existe = "non";
+// echo "Existence de l'utilisateur 'delasalle.sio.benard.h@gmail.com' : <b>" . $existe . "</b></br>";
+
+// // test de la méthode supprimerUneAutorisation ----------------------------------------------------
+// // modifié par Jim le 13/8/2018
+// echo "<h3>Test de supprimerUneAutorisation : </h3>";
+// // on crée une autorisation
+// if ($dao->creerUneAutorisation(2, 1)) $ok = "oui"; else $ok = "non";
+// echo "<p>La création de l'autorisation de l'utilisateur 2 vers l'utilisateur 1 a réussi : <b>" . $ok . "</b><br>";
+// // puis on la supprime
+// if ($dao->supprimerUneAutorisation(2, 1)) $ok = "oui"; else $ok = "non";
+// echo "<p>La suppression de l'autorisation de l'utilisateur 2 vers l'utilisateur 1 a réussi : <b>" . $ok . "</b><br>";
+
+// // test de la méthode getToutesLesTraces ----------------------------------------------------------
+// // modifié par Jim le 14/8/2018
+// echo "<h3>Test de getToutesLesTraces : </h3>";
+// $lesTraces = $dao->getToutesLesTraces();
+// $nbReponses = sizeof($lesTraces);
+// echo "<p>Nombre de traces : " . $nbReponses . "</p>";
+// // affichage des traces
+// foreach ($lesTraces as $uneTrace)
+// {   echo ($uneTrace->toString());
+// echo ('<br>');
+// }
 
 
-
-
+// test de la méthode supprimerUneTrace -----------------------------------------------------------
+// modifié par Jim le 15/8/2018
+echo "<h3>Test de supprimerUneTrace : </h3>";
+$ok = $dao->supprimerUneTrace(22);
+if ($ok) {
+    echo "<p>Trace bien supprimée !</p>";
+}
+else {
+    echo "<p>Echec lors de la suppression de la trace !</p>";
+}
 
 
 

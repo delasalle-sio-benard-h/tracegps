@@ -1081,9 +1081,43 @@ class DAO
     // début de la zone attribuée au développeur 4 (xxxxxxxxxxxxxxxxxxxx) : lignes 950 à 1150
     // --------------------------------------------------------------------------------------
     
+
+    function existeAdrMailUtilisateur($uneAdr){
+        
+        // préparation de la requête de recherche
+        $txt_req = "Select count(*) from tracegps_utilisateurs where adrMail = :uneAdr";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("uneAdr", $uneAdr, PDO::PARAM_STR);
+        // exécution de la requête
+        $req->execute();
+        $nbReponses = $req->fetchColumn(0);
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        
+        // fourniture de la réponse
+        if ($nbReponses == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     
-    
-    
+    function supprimerUneAutorisation($idAutorisant, $idAutorise){
+        
+        $txt_req = "DELETE FROM autorisations WHERE idAutorisant = :autorisant AND idAutorise = :autorise";
+            
+        $req = $this->cnx->prepare($txt_req);
+        
+        $req-bindValue(":autorisant",$idAutorisant,PDO::PARAM_INT);
+        
+        $req-bindValue(":autorise",$idAutorise,PDO::PARAM_INT);
+        
+        $req->execute();
+        
+    }
     
     
     

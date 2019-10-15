@@ -652,6 +652,28 @@ class DAO
         $req->closeCursor();
         return $lesPointsDeTrace;
     }
+    
+    public function getLesTraces($idUtilisateur){
+        $txt_req = "Select * from tracegps_traces WHERE idUtilisateur = :id ;";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("id", $idUtilisateur, PDO::PARAM_INT);
+        // extraction des données
+        $req->execute();
+        // traitement de la réponse
+        $lesTraces = array();
+        while ($uneLigne = $req->fetch(PDO::FETCH_OBJ)){
+            
+            $trace = new Trace($uneLigne->id, $uneLigne->dateDebut, $uneLigne->dateFin, $uneLigne->terminee, $uneLigne->idUtilisateur);
+            
+            foreach (DAO::getLesPointsDeTrace($uneLigne->id)as $pointTrace){
+                $trace->AjouterPoint($pointTrace);
+            }
+            $lesTraces[] = $trace;
+        }
+        $req->closeCursor();
+        return $lesTraces;
+    }
 
     
     

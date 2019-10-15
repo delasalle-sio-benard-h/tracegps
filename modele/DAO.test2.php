@@ -43,16 +43,41 @@ $dao = new DAO();
 // echo ('<br>');
 // }
 
-echo "<h3>Test de getLesPointsDeTrace : </h3>";
-$lesPoints = $dao->getLesPointsDeTrace(1);
-$nbPoints = sizeof($lesPoints);
-echo "<p>Nombre de points de la trace 1 : " . $nbPoints . "</p>";
-// affichage des points
-foreach ($lesPoints as $unPoint)
-{   echo ($unPoint->toString());
-echo ('<br>');
-}
+// echo "<h3>Test de getLesPointsDeTrace : </h3>";
+// $lesPoints = $dao->getLesPointsDeTrace(2);
+// $nbPoints = sizeof($lesPoints);
+// echo "<p>Nombre de points de la trace 1 : " . $nbPoints . "</p>";
+// // affichage des points
+// foreach ($lesPoints as $unPoint)
+// {   echo ($unPoint->toString());
+// echo ('<br>');
+// }
 
+// echo "<h3>Test de getLesTraces(idUtilisateur) : </h3>";
+// $lesTraces = $dao->getLesTraces(2);
+// $nbReponses = sizeof($lesTraces);
+// echo "<p>Nombre de traces de l'utilisateur 2 : " . $nbReponses . "</p>";
+// // affichage des traces
+// foreach ($lesTraces as $uneTrace)
+// {   echo ($uneTrace->toString());
+// echo ('<br>');
+// }
+
+echo "<h3>Test de terminerUneTrace : </h3>";
+// on choisit une trace non terminée
+$unIdTrace = 3;
+// on l'affiche
+$laTrace = $dao->getUneTrace($unIdTrace);
+echo "<h4>l'objet laTrace avant l'appel de la méthode terminerUneTrace : </h4>";
+echo ($laTrace->toString());
+echo ('<br>');
+// on la termine
+$dao->terminerUneTrace($unIdTrace);
+// et on l'affiche à nouveau
+$laTrace = $dao->getUneTrace($unIdTrace);
+echo "<h4>l'objet laTrace après l'appel de la méthode terminerUneTrace : </h4>";
+echo ($laTrace->toString());
+echo ('<br>');
 
 
 

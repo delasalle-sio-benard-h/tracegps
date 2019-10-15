@@ -590,9 +590,7 @@ class DAO
     
     public function getLesUtilisateursAutorises($idUtilisateur) {
 
-        $txt_req = "Select id, pseudo, mdpSha1, adrMail, numTel, niveau, dateCreation, nbTraces, dateDerniereTrace";
-        $txt_req .= " from tracegps_vue_utilisateurs";
-        $txt_req .= " where id IN (SELECT idAutorise FROM tracegps_autorisations WHERE idAutorisant = :autorisant";
+        $txt_req = "Select id, pseudo, mdpSha1, adrMail, numTel, niveau, dateCreation, nbTraces, dateDerniereTrace from tracegps_vue_utilisateurs where id IN (SELECT idAutorise FROM tracegps_autorisations WHERE idAutorisant = :autorisant);";
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
         $req->bindValue("autorisant", $idUtilisateur, PDO::PARAM_INT);
@@ -600,10 +598,8 @@ class DAO
         $req->execute();
         $uneLigne = $req->fetch(PDO::FETCH_OBJ);
         // traitement de la réponse
-        $lesUtilisateurs = array();
-        // tant qu'une ligne est trouvée :
-        while ($uneLigne) {
-            // création d'un objet Utilisateur
+        $utilisateursAutorise = array();
+        while ($uneLigne){
             $unId = utf8_encode($uneLigne->id);
             $unPseudo = utf8_encode($uneLigne->pseudo);
             $unMdpSha1 = utf8_encode($uneLigne->mdpSha1);
@@ -616,14 +612,12 @@ class DAO
             
             $unUtilisateur = new Utilisateur($unId, $unPseudo, $unMdpSha1, $uneAdrMail, $unNumTel, $unNiveau, $uneDateCreation, $unNbTraces, $uneDateDerniereTrace);
             // ajout de l'utilisateur à la collection
-            $lesUtilisateurs[] = $unUtilisateur;
+            $utilisateursAutorise[] = $unUtilisateur;
             // extrait la ligne suivante
             $uneLigne = $req->fetch(PDO::FETCH_OBJ);
         }
         $req->closeCursor();
-        // libère les ressources du jeu de données
-        // fourniture de la réponse
-        return $lesUtilisateurs;
+        return $utilisateursAutorise;
         
     }
     

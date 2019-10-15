@@ -19,7 +19,6 @@ include_once ('DAO.class.php');
 //include_once ('_DAO.mysql.class.php');
 $dao = new DAO();
 
-
 // test de la méthode getNiveauConnexion ----------------------------------------------------------
 // modifié par Jim le 12/8/2018
 echo "<h3>Test de getNiveauConnexion : </h3>";
@@ -37,7 +36,7 @@ echo "<p>Niveau de ('toto', 'mdputilisateur') : " . $niveau . "</br>";
 
 
 
-
+/*
 // test de la méthode existePseudoUtilisateur -----------------------------------------------------
 // modifié par Jim le 12/8/2018
 echo "<h3>Test de existePseudoUtilisateur : </h3>";
@@ -47,7 +46,7 @@ if ($dao->existePseudoUtilisateur("europa")) $existe = "oui"; else $existe = "no
 echo "Existence de l'utilisateur 'europa' : <b>" . $existe . "</b></br>";
 if ($dao->existePseudoUtilisateur("toto")) $existe = "oui"; else $existe = "non";
 echo "Existence de l'utilisateur 'toto' : <b>" . $existe . "</b></p>";
-
+*/
 
 
 
@@ -177,6 +176,7 @@ else {
     echo "<p>Echec lors de la suppression de l'utilisateur toto !</p>";
 }
 
+//>>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps
 
 
 // Le code des tests restant à développer va être réparti entre les membres de l'équipe de développement.

@@ -33,16 +33,25 @@ $dao = new DAO();
 
 // test de la méthode xxxxxxxxxxxxxxxxxxxxxxxxxxx ----------------------------------------------------------
 // modifié par xxxxxxxxxxxxxxxxx le xxxxxxxxxx
-echo "<h3> Test de getLesUtilisateursAutorises(idUtilisateur) : </h3>";
-$lesUtilisateurs = $dao->getLesUtilisateursAutorises(2);
-$nbReponses = sizeof($lesUtilisateurs);
-echo "<p>Nombre d'utilisateurs autorisés par l'utilisateur 2 : " . $nbReponses . "</p>";
-// affichage des utilisateurs
-foreach ($lesUtilisateurs as $unUtilisateur)
-{ echo ($unUtilisateur->toString());
-echo ("<br>");
-}
+// echo "<h3>Test de getLesUtilisateursAutorises(idUtilisateur) : </h3>";
+// $lesUtilisateurs = $dao->getLesUtilisateursAutorises(2);
+// $nbReponses = sizeof($lesUtilisateurs);
+// echo "<p>Nombre d'utilisateurs autorisés par l'utilisateur 2 : " . $nbReponses . "</p>";
+// // affichage des utilisateurs
+// foreach ($lesUtilisateurs as $unUtilisateur)
+// {	echo ($unUtilisateur->toString());
+// echo ('<br>');
+// }
 
+echo "<h3>Test de getLesPointsDeTrace : </h3>";
+$lesPoints = $dao->getLesPointsDeTrace(1);
+$nbPoints = sizeof($lesPoints);
+echo "<p>Nombre de points de la trace 1 : " . $nbPoints . "</p>";
+// affichage des points
+foreach ($lesPoints as $unPoint)
+{   echo ($unPoint->toString());
+echo ('<br>');
+}
 
 
 

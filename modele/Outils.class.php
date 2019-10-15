@@ -1,4 +1,4 @@
-<?php
+ <?php
 // Projet TraceGPS
 // fichier : modele/Outils.class.php
 // Rôle : boite à outils de fonctions courantes proposées sous forme de méthodes statiques

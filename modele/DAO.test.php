@@ -36,7 +36,7 @@ echo "<p>Niveau de ('toto', 'mdputilisateur') : " . $niveau . "</br>";
 
 
 
-
+/*
 // test de la méthode existePseudoUtilisateur -----------------------------------------------------
 // modifié par Jim le 12/8/2018
 echo "<h3>Test de existePseudoUtilisateur : </h3>";
@@ -46,7 +46,7 @@ if ($dao->existePseudoUtilisateur("europa")) $existe = "oui"; else $existe = "no
 echo "Existence de l'utilisateur 'europa' : <b>" . $existe . "</b></br>";
 if ($dao->existePseudoUtilisateur("toto")) $existe = "oui"; else $existe = "non";
 echo "Existence de l'utilisateur 'toto' : <b>" . $existe . "</b></p>";
-
+*/
 
 
 

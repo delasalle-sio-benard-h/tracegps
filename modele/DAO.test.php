@@ -19,7 +19,6 @@ include_once ('DAO.class.php');
 //include_once ('_DAO.mysql.class.php');
 $dao = new DAO();
 
-
 // test de la méthode getNiveauConnexion ----------------------------------------------------------
 // modifié par Jim le 12/8/2018
 echo "<h3>Test de getNiveauConnexion : </h3>";
@@ -177,6 +176,7 @@ else {
     echo "<p>Echec lors de la suppression de l'utilisateur toto !</p>";
 }
 
+//>>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps
 
 
 // Le code des tests restant à développer va être réparti entre les membres de l'équipe de développement.

@@ -327,6 +327,8 @@ class DAO
     }
     
     
+    
+    
     // Le code restant à développer va être réparti entre les membres de l'équipe de développement.
     // Afin de limiter les conflits avec GitHub, il est décidé d'attribuer une zone de ce fichier à chaque développeur.
     // Développeur 1 : lignes 350 à 549
@@ -963,10 +965,12 @@ class DAO
     
    
     // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 4 (xxxxxxxxxxxxxxxxxxxx) : lignes 950 à 1150
+    // début de la zone attribuée au développeur 4 (Benard Hugo) : lignes 950 à 1150
     // --------------------------------------------------------------------------------------
     
-    
+    public function existeAdrMailUtilisateur(string $uneadr){
+        
+    }
     
     
     

@@ -673,7 +673,12 @@ class DAO
         return $lesTraces;
     }
 
-    
+    public function terminerUneTrace($idTrace){
+        try{
+            if ($this->)
+                
+        }
+    }
     
      
     

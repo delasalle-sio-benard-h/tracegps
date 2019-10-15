@@ -620,6 +620,39 @@ class DAO
         return $utilisateursAutorise;
         
     }
+
+    public function getLesPointsDeTrace($idTrace){
+        $txt_req = "Select * from tracegps_points WHERE idTrace = :id ;";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("id", $idTrace, PDO::PARAM_INT);
+        // extraction des données
+        $req->execute();
+        $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        // traitement de la réponse
+        $lesPointsDeTrace = array();
+        while ($uneLigne){
+            $unIdTrace = utf8_encode($uneLigne->idTrace);
+            $unId = utf8_encode($uneLigne->id);
+            $uneDateHeure = utf8_encode($uneLigne->dateHeure);
+            $unRythmeCardio = utf8_encode($uneLigne->rythmeCardio);
+            $unTempsCumule = 0;
+            $uneDistanceCumulee = 0;
+            $uneVitesse = 0;
+            $uneLatitude = utf8_encode($uneLigne->latitude);
+            $uneLongitude = utf8_encode($uneLigne->longitude);
+            $uneAltitude = utf8_encode($uneLigne->altitude);
+            
+            $unPointsDeTrace = new PointDeTrace($unIdTrace, $unId, $uneLatitude, $uneLongitude, $uneAltitude,$uneDateHeure, $unRythmeCardio, $unTempsCumule, $uneDistanceCumulee, $uneVitesse);
+            // ajout de l'utilisateur à la collection
+            $lesPointsDeTrace[] = $unPointsDeTrace;
+            // extrait la ligne suivante
+            $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        }
+        $req->closeCursor();
+        return $lesPointsDeTrace;
+    }
+
     
     
      

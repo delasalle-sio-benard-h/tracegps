@@ -327,8 +327,6 @@ class DAO
     }
     
     
-    
-    
     // Le code restant à développer va être réparti entre les membres de l'équipe de développement.
     // Afin de limiter les conflits avec GitHub, il est décidé d'attribuer une zone de ce fichier à chaque développeur.
     // Développeur 1 : lignes 350 à 549
@@ -737,15 +735,75 @@ class DAO
     
     
     // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 3 (xxxxxxxxxxxxxxxxxxxx) : lignes 750 à 949
+    // début de la zone attribuée au développeur 3 (AlIX Kevin) : lignes 750 à 949
     // --------------------------------------------------------------------------------------
     
     
     
+    public function autoriseAConsulter($idAutorisant, $idAutorise)
+    {
+        $txt_req = "Select count(*) from tracegps_autorisations where idAutorisant = :idAutorisant and idAutorise = :idAutorise ";
+        $req = $this->cnx->prepare($txt_req);
+        
+        $req->bindValue("idAutorisant", $idAutorisant, PDO::PARAM_STR);
+        $req->bindValue("idAutorise", $idAutorise, PDO::PARAM_STR);
+        
+        $req->execute();
+        $nbReponses = $req->fetchColumn(0);
+        
+        $req->closeCursor();
+        
+        if ($nbReponses == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+        
+        
+    public function creerUnPointDeTrace($unPointDeTrace) {
+        
+        $txt_req1 = "insert into tracegps_points (idTrace, id, latitude, longitude, altitude, dateHeure, rythmeCardio)";
+        $txt_req1 .= " values (:idTrace, :id, :latitude, :longitude, :altitude, :dateHeure, :rythmeCardio)";
+        $req1 = $this->cnx->prepare($txt_req1);
+        
+        $req1->bindValue("idTrace", utf8_decode($unPointDeTrace->getIdTrace()), PDO::PARAM_INT);
+        $req1->bindValue("id", utf8_decode($unPointDeTrace->getId()), PDO::PARAM_INT);
+        $req1->bindValue("latitude", utf8_decode($unPointDeTrace->getLatitude()), PDO::PARAM_STR);
+        $req1->bindValue("longitude", utf8_decode($unPointDeTrace->getLongitude()), PDO::PARAM_STR);
+        $req1->bindValue("altitude", utf8_decode($unPointDeTrace->getAltitude()), PDO::PARAM_STR);
+        $req1->bindValue("dateHeure", utf8_decode($unPointDeTrace->getDateHeure()), PDO::PARAM_STR);
+        $req1->bindValue("rythmeCardio", utf8_decode($unPointDeTrace->getRythmeCardio()), PDO::PARAM_INT);
+        
+        $ok = $req1->execute();
+       
+        if ( !$ok) { return false; }
+        
+        
+        if($unPointDeTrace->getId() == 1)
+        {
+            $txt_req1 = "update tracegps_traces set dateDebut = :dateDebut";
+            $req1 = $this->cnx->prepare($txt_req1);
+            $req1->bindValue("dateDebut", utf8_decode($unPointDeTrace->getDateHeure()), PDO::PARAM_STR);
+            $req1->execute();
+        }
+        return true;
+    }
     
+//     public function getLesTracesAutorisees($idUtilisateur) {
+//         // préparation de la requête de recherche
+//         $txt_req = "Select id, dateDebut, dateFin, terminee, idUtilisateur, pseudo, nbPoints";
+//         $txt_req .= " from tracegps_vue_traces";
+//         $txt_req .= " inner join tracegps_autorisations on idUtilisateur = idAutorisant";
+//         $txt_req .= " where idAutorise = :idUtilisateur";
+//         $txt_req .= " order by id";
+        
+//         $req = $this->cnx->prepare($txt_req);
+        
+        
     
-    
-    
+//     }
     
     
     
@@ -937,12 +995,10 @@ class DAO
     
    
     // --------------------------------------------------------------------------------------
-    // début de la zone attribuée au développeur 4 (Benard Hugo) : lignes 950 à 1150
+    // début de la zone attribuée au développeur 4 (xxxxxxxxxxxxxxxxxxxx) : lignes 950 à 1150
     // --------------------------------------------------------------------------------------
     
-    public function existeAdrMailUtilisateur(string $uneadr){
-        
-    }
+    
     
     
     

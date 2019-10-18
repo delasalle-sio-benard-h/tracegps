@@ -916,7 +916,7 @@ class DAO
         
         return $lesTraces;
     }
-    }
+    
     
     
     
@@ -1199,8 +1199,10 @@ class DAO
         } catch (Exception $e) {
             
             return false;
-        }}
-    
+        }
+        
+    }
+}
     
     
     

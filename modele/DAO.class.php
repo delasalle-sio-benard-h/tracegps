@@ -376,11 +376,92 @@ class DAO
     }
     
     public function creerUneAutorisation($idAutorisant, $idAutorise){
+        $txt_req = "insert into tracegps_autorisations values(:idAutorisant, :idAutorise)";
+        $req = $this->cnx->prepare($txt_req);
+        $req->bindValue("idAutorisant", $idAutorisant,PDO::PARAM_INT);
+        $req->bindValue("idAutorise", $idAutorise,PDO::PARAM_INT);
         
+        $ok = $req->execute();
+        
+        return $ok;
     }
     
+    public function getUneTrace($idTrace){
+        $txt_req = "select * from tracegps_traces where id = :idTrace";
+        $req = $this->cnx->prepare($txt_req);
+        $req->bindValue("idTrace", $idTrace,PDO::PARAM_INT);
+        $req->execute();
+        $uneLigne = $req->fetch(PDO::FETCH_OBJ);
+        if($uneLigne){
+            $id = $uneLigne -> id;
+            $dateDebut = $uneLigne -> dateDebut;
+            $dateFin = $uneLigne -> dateFin;
+            $termine = $uneLigne -> terminee;
+            $idUtilisateur = $uneLigne -> idUtilisateur;
+            $uneTrace = new Trace($id,$dateDebut,$dateFin,$termine,$idUtilisateur);
+
+            $lesPoints = $this->getLesPointsDeTrace($idTrace);
+            foreach ($lesPoints as $point){
+                $uneTrace->AjouterPoint($point);
+            }
+            
+            return $uneTrace;
+        }
+        return null;
+    }
     
+    public function existeTrace($uneTrace){
+        // préparation de la requête de recherche
+        $txt_req = "Select count(*) from tracegps_traces where id = :idTrace";
+        $req = $this->cnx->prepare($txt_req);
+        // liaison de la requête et de ses paramètres
+        $req->bindValue("idTrace", $uneTrace->getId(), PDO::PARAM_INT);
+        // exécution de la requête
+        $req->execute();
+        $nbReponses = $req->fetchColumn(0);
+        // libère les ressources du jeu de données
+        $req->closeCursor();
+        
+        // fourniture de la réponse
+        if ($nbReponses == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
     
+    public function creerUneTrace($uneTrace){
+      
+        if($this->existeTrace($uneTrace)) return false;
+        
+        $txt_req1 = "insert into tracegps_traces (dateDebut,dateFin,terminee,idUtilisateur)";
+        $txt_req1 .= " values (:dateDebut, :dateFin, :terminee, :idUtilisateur)";
+        
+        $req1 = $this->cnx->prepare($txt_req1);
+        $req1->bindValue("dateDebut", utf8_decode($uneTrace->getDateHeureDebut()), PDO::PARAM_STR);
+        if($uneTrace->getDateHeureFin())
+        {
+            $req1->bindValue("dateFin", utf8_decode($uneTrace->getDateHeureFin()), PDO::PARAM_STR);
+            
+        }
+        else
+        {
+            $req1->bindValue("dateFin", null, PDO::PARAM_NULL);
+            
+            
+        }
+        $req1->bindValue("idUtilisateur", utf8_decode($uneTrace->getIdUtilisateur()), PDO::PARAM_INT);
+        $req1->bindValue("terminee", utf8_decode($uneTrace->getTerminee()), PDO::PARAM_INT);
+        $ok = $req1->execute();
+        
+        if ( !$ok) { return false; }
+        
+        // recherche de l'identifiant (auto_increment) qui a été attribué à la trace
+        $unId = $this->cnx->lastInsertId();
+        $uneTrace->setId($unId);
+        return true;
+    }
     
     
     
@@ -1221,7 +1302,7 @@ class DAO
 
 
     
- // fin de la classe DAO
+}// fin de la classe DAO
 
 // ATTENTION : on ne met pas de balise de fin de script pour ne pas prendre le risque
 // d'enregistrer d'espaces après la balise de fin de script !!!!!!!!!!!!

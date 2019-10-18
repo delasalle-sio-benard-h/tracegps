@@ -1,16 +1,5 @@
 <?php
-// Projet TraceGPS - services web
-// fichier :  services/DemanderMdp.php
-// Dernière mise à jour : 04/12/2018 par lucas
-// Rôle : ce service web permet à un utilisateur de demander un nouveau mot de passe s'il l'a oublié.
-// Le service web doit recevoir 2 paramètres :
-//     pseudo : le pseudo de l'utilisateur
-//     lang : le langage du flux de données retourné ("xml" ou "json") ; "xml" par défaut si le paramètre est absent ou incorrect
-// Le service retourne un flux de données XML ou JSON contenant un compte-rendu d'exécution
-// Les paramètres peuvent être passés par la méthode GET (pratique pour les tests, mais à éviter en exploitation) :
-//     http://<hébergeur>/ChangerDeMdp.php?pseudo=europa&mdpSha1=13e3668bbee30b004380052b086457b014504b3e&nouveauMdp=123&confirmationMdp=123&lang=xml
-// Les paramètres peuvent être passés par la méthode POST (à privilégier en exploitation pour la confidentialité des données) :
-//     http://<hébergeur>/DemanderMdp.php
+
 // connexion du serveur web à la base MySQL
 include_once ('../modele/DAO.class.php');
 $dao = new DAO();

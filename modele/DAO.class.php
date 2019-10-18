@@ -1318,8 +1318,14 @@ class DAO
             
             return false;
         }
+<<<<<<< HEAD
     }
     
+=======
+        
+    }
+}
+>>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps.git
     
     
     

@@ -1,18 +1,5 @@
 <?php
-// Projet TraceGPS - services web
-// fichier : services/SupprimerUnUtilisateur.php
-// Dernière mise à jour : 15/11/2018 par Jim
-// Rôle : ce service permet à un administrateur de supprimer un utilisateur (à condition qu'il ne possède aucune trace enregistrée)
-// Le service web doit recevoir 4 paramètres :
-//     pseudo : le pseudo de l'administrateur
-//     mdpSha1 : le mot de passe hashé en sha1 de l'administrateur
-//     pseudoAsupprimer : le pseudo de l'utilisateur à supprimer
-//     lang : le langage du flux de données retourné ("xml" ou "json") ; "xml" par défaut si le paramètre est absent ou incorrect
-// Le service retourne un flux de données XML ou JSON contenant un compte-rendu d'exécution
-// Les paramètres peuvent être passés par la méthode GET (pratique pour les tests, mais à éviter en exploitation) :
-//     http://<hébergeur>/SupprimerUnUtilisateur.php?pseudo=admin&mdpSha1=ff9fff929a1292db1c00e3142139b22ee4925177&pseudoAsupprimer=oxygen&lang=xml
-// Les paramètres peuvent être passés par la méthode POST (à privilégier en exploitation pour la confidentialité des données) :
-//     http://<hébergeur>/SupprimerUnUtilisateur.php
+
 // connexion du serveur web à la base MySQL
 include_once ('../modele/DAO.class.php');
 $dao = new DAO();

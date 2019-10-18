@@ -1,17 +1,5 @@
 <?php
-// Projet TraceGPS - services web
-// fichier : services/GetTousLesUtilisateurs.php
-// Dernière mise à jour : 14/11/2018 par Jim
-// Rôle : ce service permet à un utilisateur authentifié d'obtenir la liste de tous les utilisateurs (de niveau 1)
-// Le service web doit recevoir 3 paramètres :
-//     pseudo : le pseudo de l'utilisateur
-//     mdpSha1 : le mot de passe de l'utilisateur hashé en sha1
-//     lang : le langage du flux de données retourné ("xml" ou "json") ; "xml" par défaut si le paramètre est absent ou incorrect
-// Le service retourne un flux de données XML ou JSON contenant un compte-rendu d'exécution
-// Les paramètres peuvent être passés par la méthode GET (pratique pour les tests, mais à éviter en exploitation) :
-//     http://<hébergeur>/GetTousLesUtilisateurs.php?pseudo=callisto&mdpSha1=13e3668bbee30b004380052b086457b014504b3e&lang=xml
-// Les paramètres peuvent être passés par la méthode POST (à privilégier en exploitation pour la confidentialité des données) :
-//     http://<hébergeur>/GetTousLesUtilisateurs.php
+
 // connexion du serveur web à la base MySQL
 include_once ('../modele/DAO.class.php');
 $dao = new DAO();
@@ -64,36 +52,6 @@ exit;
 // création du flux XML en sortie
 function creerFluxXML($msg, $lesUtilisateurs)
 {
-    /* Exemple de code XML
-     <?xml version="1.0" encoding="UTF-8"?>
-     <!--Service web GetTousLesUtilisateurs - BTS SIO - Lycée De La Salle - Rennes-->
-     <data>
-     <reponse>2 utilisateur(s).</reponse>
-     <donnees>
-     <lesUtilisateurs>
-     <utilisateur>
-     <id>2</id>
-     <pseudo>callisto</pseudo>
-     <adrMail>delasalle.sio.eleves@gmail.com</adrMail>
-     <numTel>22.33.44.55.66</numTel>
-     <niveau>1</niveau>
-     <dateCreation>2018-08-12 19:45:23</dateCreation>
-     <nbTraces>2</nbTraces>
-     <dateDerniereTrace>2018-01-19 13:08:48</dateDerniereTrace>
-     </utilisateur>
-     <utilisateur>
-     <id>3</id>
-     <pseudo>europa</pseudo>
-     <adrMail>delasalle.sio.eleves@gmail.com</adrMail>
-     <numTel>22.33.44.55.66</numTel>
-     <niveau>1</niveau>
-     <dateCreation>2018-08-12 19:45:23</dateCreation>
-     <nbTraces>0</nbTraces>
-     </utilisateur>
-     </lesUtilisateurs>
-     </donnees>
-     </data>
-     */
     
     // crée une instance de DOMdocument (DOM : Document Object Model)
     $doc = new DOMDocument();
@@ -171,37 +129,6 @@ function creerFluxXML($msg, $lesUtilisateurs)
 // création du flux JSON en sortie
 function creerFluxJSON($msg, $lesUtilisateurs)
 {
-    /* Exemple de code JSON
-     {
-     "data": {
-     "reponse": "2 utilisateur(s).",
-     "donnees": {
-     "lesUtilisateurs": [
-     {
-     "id": "2",
-     "pseudo": "callisto",
-     "adrMail": "delasalle.sio.eleves@gmail.com",
-     "numTel": "22.33.44.55.66",
-     "niveau": "1",
-     "dateCreation": "2018-08-12 19:45:23",
-     "nbTraces": "2",
-     "dateDerniereTrace": "2018-01-19 13:08:48"
-     },
-     {
-     "id": "3",
-     "pseudo": "europa",
-     "adrMail": "delasalle.sio.eleves@gmail.com",
-     "numTel": "22.33.44.55.66",
-     "niveau": "1",
-     "dateCreation": "2018-08-12 19:45:23",
-     "nbTraces": "0"
-     }
-     ]
-     }
-     }
-     }
-     */
-    
     
     if (sizeof($lesUtilisateurs) == 0) {
         // construction de l'élément "data"

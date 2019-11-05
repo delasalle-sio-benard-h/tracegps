@@ -46,7 +46,8 @@ else {
     }
     else
     {	// récupération de la liste des utilisateurs à l'aide de la méthode getTousLesUtilisateurs de la classe DAO
-        $lesUtilisateurs = $dao->getLesUtilisateursAutorise($dao->getUnUtilisateur($pseudo)->getId());
+
+        $lesUtilisateurs = $dao->getLesUtilisateursAutorises($dao->getUnUtilisateur($pseudo)->getId());
         
         // mémorisation du nombre d'utilisateurs
         $nbReponses = sizeof($lesUtilisateurs);
@@ -125,7 +126,7 @@ function creerFluxXML($msg, $lesUtilisateurs)
     $doc->encoding = 'UTF-8';
     
     // crée un commentaire et l'encode en UTF-8
-    $elt_commentaire = $doc->createComment('Service web GetTousLesUtilisateursQueJautorise - BTS SIO - Lycée De La Salle - Rennes');
+    $elt_commentaire = $doc->createComment('Service web GetTousLesUtilisateurs - BTS SIO - Lycée De La Salle - Rennes');
     // place ce commentaire à la racine du document XML
     $doc->appendChild($elt_commentaire);
     

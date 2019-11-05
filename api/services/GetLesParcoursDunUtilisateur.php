@@ -8,13 +8,13 @@ $dao = new DAO();
 // la fonction $_POST récupère une donnée envoyées par la méthode POST
 // la fonction $_REQUEST récupère par défaut le contenu des variables $_GET, $_POST, $_COOKIE
 if ( empty ($_REQUEST ["pseudo"]) == true)  $pseudo = "";  else   $pseudo = $_REQUEST ["pseudo"];
-if ( empty ($_REQUEST ["mdpSha1"]) == true)  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdpSha1"];
+if ( empty ($_REQUEST ["mdp"]) == true)  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdp"];
 if ( empty ($_REQUEST ["lang"]) == true) $lang = "";  else $lang = strtolower($_REQUEST ["lang"]);
 if ( empty ($_REQUEST ["pseudoConsulte"]) == true) $pseudoConsulte = "";  else $pseudoConsulte = strtolower($_REQUEST ["pseudoConsulte"]);
 // "xml" par défaut si le paramètre lang est absent ou incorrect
 if ($lang != "json") $lang = "xml";
 // initialisation du nombre de réponses
-$nbReponses = 0;
+
 $lesTraces = array();
 // Contrôle de la présence des paramètres
 if ( $pseudo == "" || $mdpSha1 == "" || $pseudoConsulte == "" )
@@ -24,7 +24,7 @@ else
 {	if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 )
     $msg = "Erreur : authentification incorrecte.";
     else
-    {	$lesTraces = $dao->getLesTraces($pseudoConsulte);
+    {	$lesTraces = $dao->getLesTraces( $dao->getUnUtilisateur($pseudoConsulte)->getId());
         
         // mémorisation du nombre d'utilisateurs
         $nbReponses = sizeof($lesTraces);

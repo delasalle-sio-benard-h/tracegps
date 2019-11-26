@@ -7,10 +7,10 @@ $dao = new DAO();
 // la fonction $_GET récupère une donnée passée en paramètre dans l'URL par la méthode GET
 // la fonction $_POST récupère une donnée envoyées par la méthode POST
 // la fonction $_REQUEST récupère par défaut le contenu des variables $_GET, $_POST, $_COOKIE
-if ( empty ($_REQUEST ["pseudo"]) == true)  $pseudo = "";  else   $pseudo = $_REQUEST ["pseudo"];
-if ( empty ($_REQUEST ["mdp"]) == true)  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdp"];
-if ( empty ($_REQUEST ["lang"]) == true) $lang = "";  else $lang = strtolower($_REQUEST ["lang"]);
-if ( empty ($_REQUEST ["pseudoConsulte"]) == true) $pseudoConsulte = "";  else $pseudoConsulte = strtolower($_REQUEST ["pseudoConsulte"]);
+if ( empty ($_REQUEST ["pseudo"]))  $pseudo = "";  else   $pseudo = $_REQUEST ["pseudo"];
+if ( empty ($_REQUEST ["mdp"]))  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdp"];
+if ( empty ($_REQUEST ["lang"])) $lang = "";  else $lang = strtolower($_REQUEST ["lang"]);
+if ( empty ($_REQUEST ["pseudoConsulte"])) $pseudoConsulte = "";  else $pseudoConsulte = strtolower($_REQUEST ["pseudoConsulte"]);
 // "xml" par défaut si le paramètre lang est absent ou incorrect
 if ($lang != "json") $lang = "xml";
 // initialisation du nombre de réponses

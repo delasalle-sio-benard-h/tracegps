@@ -669,7 +669,9 @@ class DAO
     
     public function getLesUtilisateursAutorises($idUtilisateur) {
 
-        $txt_req = "Select id, pseudo, mdpSha1, adrMail, numTel, niveau, dateCreation, nbTraces, dateDerniereTrace from tracegps_vue_utilisateurs where id IN (SELECT idAutorise FROM tracegps_autorisations WHERE idAutorisant = :autorisant);";
+        $txt_req = "Select id, pseudo, mdpSha1, adrMail, numTel, niveau, dateCreation, nbTraces, dateDerniereTrace ";
+        $txt_req .= "from tracegps_vue_utilisateurs where id IN (";
+        $txt_req .= "SELECT idAutorise FROM tracegps_autorisations WHERE idAutorisant = :autorisant)";
         $req = $this->cnx->prepare($txt_req);
         // liaison de la requête et de ses paramètres
         $req->bindValue("autorisant", $idUtilisateur, PDO::PARAM_INT);

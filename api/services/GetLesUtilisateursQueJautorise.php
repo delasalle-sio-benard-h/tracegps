@@ -46,13 +46,8 @@ else {
     }
     else
     {	// récupération de la liste des utilisateurs à l'aide de la méthode getTousLesUtilisateurs de la classe DAO
-<<<<<<< HEAD
         $id = $dao->getUnUtilisateur($pseudo)->getId();
         $lesUtilisateurs = $dao->getLesUtilisateursAutorises($id);
-=======
-
-        $lesUtilisateurs = $dao->getLesUtilisateursAutorises($dao->getUnUtilisateur($pseudo)->getId());
->>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps.git
         
         // mémorisation du nombre d'utilisateurs
         $nbReponses = sizeof($lesUtilisateurs);
@@ -131,11 +126,7 @@ function creerFluxXML($msg, $lesUtilisateurs)
     $doc->encoding = 'UTF-8';
     
     // crée un commentaire et l'encode en UTF-8
-<<<<<<< HEAD
     $elt_commentaire = $doc->createComment('Service web GetLesUtilisateursQueJautorise - BTS SIO - Lycée De La Salle - Rennes');
-=======
-    $elt_commentaire = $doc->createComment('Service web GetTousLesUtilisateurs - BTS SIO - Lycée De La Salle - Rennes');
->>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps.git
     // place ce commentaire à la racine du document XML
     $doc->appendChild($elt_commentaire);
     

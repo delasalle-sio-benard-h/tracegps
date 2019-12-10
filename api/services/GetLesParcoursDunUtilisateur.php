@@ -19,18 +19,37 @@
 $dao = new DAO();
 
 // Récupération des données transmises
+<<<<<<< HEAD
 $pseudo = ( empty($this->request['pseudo'])) ? "" : $this->request['pseudo'];
 $mdpSha1 = ( empty($this->request['mdp'])) ? "" : $this->request['mdp'];
 $pseudoConsulte = ( empty($this->request['pseudoConsulte'])) ? "" : $this->request['pseudoConsulte'];
 $lang = ( empty($this->request['lang'])) ? "" : $this->request['lang'];
 
+=======
+// la fonction $_GET récupère une donnée passée en paramètre dans l'URL par la méthode GET
+// la fonction $_POST récupère une donnée envoyées par la méthode POST
+// la fonction $_REQUEST récupère par défaut le contenu des variables $_GET, $_POST, $_COOKIE
+if ( empty ($_REQUEST ["pseudo"]))  $pseudo = "";  else   $pseudo = $_REQUEST ["pseudo"];
+if ( empty ($_REQUEST ["mdp"]))  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdp"];
+if ( empty ($_REQUEST ["lang"])) $lang = "";  else $lang = strtolower($_REQUEST ["lang"]);
+if ( empty ($_REQUEST ["pseudoConsulte"])) $pseudoConsulte = "";  else $pseudoConsulte = strtolower($_REQUEST ["pseudoConsulte"]);
+>>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps.git
 // "xml" par défaut si le paramètre lang est absent ou incorrect
 if ($lang != "json") $lang = "xml";
+<<<<<<< HEAD
  
 // La méthode HTTP utilisée doit être GET
 if ($this->getMethodeRequete() != "GET")
 {	$msg = "Erreur : méthode HTTP incorrecte.";
     $code_reponse = 406;
+=======
+// initialisation du nombre de réponses
+
+$lesTraces = array();
+// Contrôle de la présence des paramètres
+if ( $pseudo == "" || $mdpSha1 == "" || $pseudoConsulte == "" )
+{	$msg = "Erreur : données incomplètes.";
+>>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps.git
 }
 else
 {
@@ -40,10 +59,20 @@ else
     $code_reponse = 400;
     }
     else
+<<<<<<< HEAD
     {	// il faut être administrateur pour supprimer un utilisateur
         if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 )
         {   $msg = "Erreur : authentification incorrecte.";
         $code_reponse = 401;
+=======
+    {	$lesTraces = $dao->getLesTraces( $dao->getUnUtilisateur($pseudoConsulte)->getId());
+        
+        // mémorisation du nombre d'utilisateurs
+        $nbReponses = sizeof($lesTraces);
+        
+        if ($nbReponses == 0) {
+            $msg = "Aucune trace trouvées pour ".$pseudoConsulte;
+>>>>>>> branch 'master' of https://github.com/delasalle-sio-benard-h/tracegps.git
         }
         else
         {	// contrôle d'existence de pseudoAsupprimer

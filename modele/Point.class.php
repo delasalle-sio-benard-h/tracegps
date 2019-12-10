@@ -6,28 +6,16 @@
 
 class Point
 {
-    
-    // ------------------------------------------------------------------------------------------------------
-    // ---------------------------------- Attributs protégés de la classe -----------------------------------
-    // ------------------------------------------------------------------------------------------------------
-    
-    // protected au lieu de private car cette classe fera l'objet d'un héritage
     protected $latitude;			// latitude
     protected $longitude;		// longitude
     protected $altitude;			// altitude
-    // ------------------------------------------------------------------------------------------------------
-    // ----------------------------------------- Constructeur -----------------------------------------------
-    // ------------------------------------------------------------------------------------------------------
     
     public function __construct($uneLatitude, $uneLongitude, $uneAltitude) {
         $this->latitude = $uneLatitude;
         $this->longitude = $uneLongitude;
         $this->altitude = $uneAltitude;
     }
-    // ------------------------------------------------------------------------------------------------------
-    // ---------------------------------------- Getters et Setters ------------------------------------------
-    // ------------------------------------------------------------------------------------------------------
-    
+     
     public function getLatitude()	{return $this->latitude;}
     public function setLatitude($uneLatitude) {$this->latitude = $uneLatitude;}
     
@@ -36,28 +24,14 @@ class Point
     
     public function getAltitude()	{return $this->altitude;}
     public function setAltitude($uneAltitude) {$this->altitude = $uneAltitude;}
-    // ------------------------------------------------------------------------------------------------------
-    // ---------------------------------------- Méthodes d'instances ----------------------------------------
-    // ------------------------------------------------------------------------------------------------------
     
-    // Fournit une chaine contenant toutes les données de l'objet
     public function toString() {
-        $msg = "latitude : " . $this->latitude . "<br>";
+        $msg = "latitude : " . $this->latitude . "<br>"; 
         $msg .= "longitude : " . $this->longitude . "<br>";
         $msg .= "altitude : " . $this->altitude . "<br>";
         return $msg;
     }
-    // ------------------------------------------------------------------------------------------------------
-    // ---------------------------------------- Méthodes statiques ------------------------------------------
-    // ------------------------------------------------------------------------------------------------------
     
-    // Méthode statique privée
-    // calcule la distance (en Km) entre 2 points géographiques passés avec 4 paramètres :
-    // $latitude1  : latitude point 1 (en degrés décimaux)
-    // $longitude1 : longitude point 1 (en degrés décimaux)
-    // $latitude2  : latitude point 2 (en degrés décimaux)
-    // $longitude2 : longitude point 2 (en degrés décimaux)
-    // fournit     : la distance (en Km) entre les 2 points
     private static function getDistanceBetween ($latitude1, $longitude1, $latitude2, $longitude2) {
         if (abs($latitude1 - $latitude2) < 0.000001 && abs($longitude1 - $longitude2) < 0.000001) return 0;
         try
@@ -80,14 +54,11 @@ class Point
         }
     }
     
-    // Méthode statique publique
-    // calcule la distance (en Km) entre 2 points géographiques passés en paramètres :
-    // point1  : le premier point
-    // point2  : le second point
-    // fournit : la distance (en Km) entre les 2 points
     public static function getDistance (Point $point1, Point $point2) {
-        // A VOUS DE TROUVER LE CODE  MANQUANT
-        // (il faut appeler la méthode précédente)
-        return Point::getDistanceBetween($point1->getLatitude(), $point1->getLongitude(), $point2->getLatitude(), $point2->getLongitude()); 
+        return Point::getDistanceBetween($point1->getLatitude(), $point1->getLongitude(), $point2->getLatitude(), $point2->getLongitude());
     }
-}
+    
+} // fin de la classe Point
+
+// ATTENTION : on ne met pas de balise de fin de script pour ne pas prendre le risque
+// d'enregistrer d'espaces après la balise de fin de script !!!!!!!!!!!!

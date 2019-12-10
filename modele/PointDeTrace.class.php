@@ -14,40 +14,21 @@ class PointDeTrace extends Point
     private $rythmeCardio;	// rythme cardiaque (en bpm : battements par minute)
     private $tempsCumule;	// temps cumulé depuis le départ (en secondes)
     private $distanceCumulee;	// distance cumulée depuis le départ (en Km)
-    private $vitesse;
+    private $vitesse;		// vitesse instantanée au point de passage (en Km/h)
     
-    // ------------------------------------------------------------------------------------------------------
-    // ----------------------------------------- Constructeur -----------------------------------------------
-    // ------------------------------------------------------------------------------------------------------
-    
-    // Constructeur avec 10 paramètres :
-    // $unIdTrace  : identifiant de la trace
-    // $unId  : identifiant relatif du point dans la trace
-    // $uneLatitude  : latitude du point (en degrés décimaux)
-    // $uneLongitude : longitude du point (en degrés décimaux)
-    // $uneAltitude  : altitude du point (en mètres)
-    // $uneDateHeure : heure de passage au point
-    // $unRythmeCardio : rythme cardiaque au passage au point
-    // $unTempsCumule : temps cumulé depuis le départ(en secondes)
-    // $uneDistanceCumulee : distance cumulée depuis le départ (en Km)
-    // $uneVitesse : vitesse instantanée, calculée entre le point précédent et le point suivant (en Km/h)
     public function __construct($unIdTrace, $unID, $uneLatitude, $uneLongitude, $uneAltitude,
         $uneDateHeure, $unRythmeCardio, $unTempsCumule, $uneDistanceCumulee, $uneVitesse) {
             // appelle le constructeur de la classe mère avec 3 paramètres
             parent::__construct($uneLatitude, $uneLongitude, $uneAltitude);
-            // initialise les nouveaux attributs
             $this->idTrace = $unIdTrace;
             $this->id = $unID;
             $this->dateHeure = $uneDateHeure;
             $this->rythmeCardio = $unRythmeCardio;
             $this->tempsCumule = $unTempsCumule;
-            $this->distanceCumulee = $uneDistanceCumulee;
+            $this->distanceCumulee = $uneDistanceCumulee; 
             $this->vitesse = $uneVitesse;
     }
-    // ------------------------------------------------------------------------------------------------------
-    // ---------------------------------------- Getters et Setters ------------------------------------------
-    // ------------------------------------------------------------------------------------------------------
-    
+     
     public function getIdTrace()	{return $this->idTrace;}
     public function setIdTrace($unIdTrace) {$this->idTrace = $unIdTrace;}
     
@@ -69,10 +50,6 @@ class PointDeTrace extends Point
     public function getVitesse() {return $this->vitesse;}
     public function setVitesse($uneVitesse) {$this->vitesse = $uneVitesse;}
     
-    // ------------------------------------------------------------------------------------------------------
-    // ---------------------------------------- Méthodes d'instances ----------------------------------------
-    // ------------------------------------------------------------------------------------------------------
-    
     // Fournit une chaine contenant toutes les données de l'objet
     public function toString() {
         $msg = "IdTrace : " . $this->getIdTrace() . "<br>";
@@ -92,13 +69,17 @@ class PointDeTrace extends Point
     // Méthode fournissant le temps cumulé depuis le départ (sous la forme d'une chaine "hh:mm:ss")
     public function getTempsCumuleEnChaine()
     {
+        $totSeconde = $this->tempsCumule;
         
-        $total = $this->tempsCumule;
-        $heures = $total / 3600;
-        $minutes = ($total % 3600) / 60;
-        $secondes = ($total % 3600) % 60;
+        $heures = intdiv($totSeconde, 3600);
+        $totSeconde = $totSeconde - (3600 * $heures);
+        $minutes = intdiv($totSeconde, 60);
+        $totSeconde = $totSeconde - ($minutes * 60);
+        $secondes = $totSeconde;
+        
         
         return sprintf("%02d",$heures) . ":" . sprintf("%02d",$minutes) . ":" . sprintf("%02d",$secondes);
     }
+    
     
 } // fin de la classe PointDeTrace

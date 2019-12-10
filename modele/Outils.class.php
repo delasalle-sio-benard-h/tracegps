@@ -1,4 +1,4 @@
- <?php
+<?php
 // Projet TraceGPS
 // fichier : modele/Outils.class.php
 // Rôle : boite à outils de fonctions courantes proposées sous forme de méthodes statiques
@@ -31,8 +31,13 @@
 
 // ces méthodes statiques sont appelées avec la notation suivante :
 //     Outils::methode(parametres);
+ 
 
-// début de la classe Outils
+// début de la classe Outils// ces méthodes statiques sont appelées avec la notation suivante :
+//     Outils::methode(parametres);
+ 
+
+
 class Outils
 {
 
@@ -198,6 +203,7 @@ class Outils
 	// Dernière mise à jour : 13/7/2018 par JM CARTRON
 	public static function  envoyerMail ($adresseDestinataire, $sujet, $message, $adresseEmetteur)
 	{
+	    $message = str_replace("&", "$$", $message);
 	    // préparation de l'URL du service web avec ses paramètres
 	    $urlService = "http://sio.lyceedelasalle.fr/tracegps/services/ServiceEnvoyerMail.php";
 	    $urlService .= "?adresseDestinataire=" . $adresseDestinataire;

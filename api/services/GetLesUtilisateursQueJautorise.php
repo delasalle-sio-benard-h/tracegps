@@ -13,7 +13,7 @@
 // Les paramètres doivent être passés par la méthode GET :
 //     http://<hébergeur>/tracegps/api/GetTousLesUtilisateurs?pseudo=callisto&mdp=13e3668bbee30b004380052b086457b014504b3e&lang=xml
 
-// connexion du serveur web à la base MySQL
+// connexion du serveur web à la base MySQL 
 $dao = new DAO();
 
 // Récupération des données transmises
@@ -23,7 +23,7 @@ $lang = ( empty($this->request['lang'])) ? "" : $this->request['lang'];
 
 // "xml" par défaut si le paramètre lang est absent ou incorrect
 if ($lang != "json") $lang = "xml";
-
+ 
 // initialisation du nombre de réponses
 $nbReponses = 0;
 $lesUtilisateurs = array();
@@ -31,13 +31,13 @@ $lesUtilisateurs = array();
 // La méthode HTTP utilisée doit être GET
 if ($this->getMethodeRequete() != "GET")
 {	$msg = "Erreur : méthode HTTP incorrecte.";
-$code_reponse = 406;
+    $code_reponse = 406;
 }
 else {
     // Les paramètres doivent être présents
     if ( $pseudo == "" || $mdpSha1 == "" )
     {	$msg = "Erreur : données incomplètes.";
-    $code_reponse = 400;
+        $code_reponse = 400;
     }
     else
     {	if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 ) {
@@ -46,17 +46,18 @@ else {
     }
     else
     {	// récupération de la liste des utilisateurs à l'aide de la méthode getTousLesUtilisateurs de la classe DAO
-        $lesUtilisateurs = $dao->getLesUtilisateursAutorise($dao->getUnUtilisateur($pseudo)->getId());
+        $id = $dao->getUnUtilisateur($pseudo)->getId();
+        $lesUtilisateurs = $dao->getLesUtilisateursAutorises($id);
         
         // mémorisation du nombre d'utilisateurs
         $nbReponses = sizeof($lesUtilisateurs);
         
         if ($nbReponses == 0) {
-            $msg = "Aucun utilisateur.";
+            $msg = "Aucune autorisation accordée par ".$pseudo.".";
             $code_reponse = 200;
         }
         else {
-            $msg = $nbReponses . " utilisateur(s).";
+            $msg = $nbReponses . " autorisation(s) accordée(s) par ".$pseudo.".";
             $code_reponse = 200;
         }
     }
@@ -125,7 +126,7 @@ function creerFluxXML($msg, $lesUtilisateurs)
     $doc->encoding = 'UTF-8';
     
     // crée un commentaire et l'encode en UTF-8
-    $elt_commentaire = $doc->createComment('Service web GetTousLesUtilisateursQueJautorise - BTS SIO - Lycée De La Salle - Rennes');
+    $elt_commentaire = $doc->createComment('Service web GetLesUtilisateursQueJautorise - BTS SIO - Lycée De La Salle - Rennes');
     // place ce commentaire à la racine du document XML
     $doc->appendChild($elt_commentaire);
     
@@ -144,7 +145,7 @@ function creerFluxXML($msg, $lesUtilisateurs)
         $elt_data->appendChild($elt_donnees);
         
         // place l'élément 'lesUtilisateurs' dans l'élément 'donnees'
-        $elt_lesUtilisateurs = $doc->createElement('lesUtilisateurs');
+        $elt_lesUtilisateurs = $doc->createElement('lesUtilisateursAutorisés');
         $elt_donnees->appendChild($elt_lesUtilisateurs);
         
         foreach ($lesUtilisateurs as $unUtilisateur)
@@ -249,7 +250,7 @@ function creerFluxJSON($msg, $lesUtilisateurs)
             $lesObjetsDuTableau[] = $unObjetUtilisateur;
         }
         // construction de l'élément "lesUtilisateurs"
-        $elt_utilisateur = ["lesUtilisateurs" => $lesObjetsDuTableau];
+        $elt_utilisateur = ["lesUtilisateursAutorisés" => $lesObjetsDuTableau];
         
         // construction de l'élément "data"
         $elt_data = ["reponse" => $msg, "donnees" => $elt_utilisateur];

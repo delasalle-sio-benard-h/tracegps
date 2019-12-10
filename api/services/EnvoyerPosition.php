@@ -1,158 +1,168 @@
 <?php
-
-// connexion du serveur web à la base MySQL
-include_once ('../modele/DAO.class.php');
-$dao = new DAO();
-// Récupération des données transmises
-// la fonction $_GET récupère une donnée passée en paramètre dans l'URL par la méthode GET
-// la fonction $_POST récupère une donnée envoyées par la méthode POST
-// la fonction $_REQUEST récupère par défaut le contenu des variables $_GET, $_POST, $_COOKIE
-if ( empty ($_REQUEST ["pseudo"]) == true)  $pseudo = "";  else   $pseudo = $_REQUEST ["pseudo"];
-if ( empty ($_REQUEST ["mdpSha1"]) == true)  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdpSha1"];
-if ( empty ($_REQUEST ["idTrace"]) == true)  $idTrace = "";  else   $idTrace = $_REQUEST ["idTrace"];
-if ( empty ($_REQUEST ["dateHeure"]) == true)  $dateHeure = "";  else   $dateHeure = $_REQUEST ["dateHeure"];
-if ( empty ($_REQUEST ["latitude"]) == true)  $latitude = "";  else   $latitude = $_REQUEST ["latitude"];
-if ( empty ($_REQUEST ["longitude"]) == true)  $longitude = "";  else   $longitude = $_REQUEST ["longitude"];
-if ( empty ($_REQUEST ["altitude"]) == true)  $altitude = "";  else   $altitude = $_REQUEST ["altitude"];
-if ( empty ($_REQUEST ["rythmeCardio"]) == true)  $rythmeCardio = "";  else   $rythmeCardio = $_REQUEST ["rythmeCardio"];
-if ( empty ($_REQUEST ["lang"]) == true) $lang = "";  else $lang = strtolower($_REQUEST ["lang"]);
-// "xml" par défaut si le paramètre lang est absent ou incorrect
-if ($lang != "json") $lang = "xml";
-$valueIdPoint = 0;
-// Contrôle de la présence des paramètres
-if ( $pseudo == "" || $mdpSha1 == "" || $idTrace == "" || $dateHeure =="" || $latitude == "" ||
-    $longitude == "" || $altitude =="" || $rythmeCardio =="")
-{	$msg = "Erreur : données incomplètes.";
-}
-else
-{	// authentification
-    if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 )
-    {   $msg = "Erreur : authentification incorrecte.";
-    }
+    // Projet TraceGPS - services web
+    // fichier : services/EnvoyerPosition.php
+    // Dernière mise à jour : 05/11/2018 par Gurak
+    
+    // Les paramètres peuvent être passés par la méthode GET (pratique pour les tests, mais à éviter en exploitation) :
+    //     http://<hébergeur>/SupprimerUnUtilisateur.php?pseudo=admin&mdpSha1=ff9fff929a1292db1c00e3142139b22ee4925177&pseudoAsupprimer=oxygen&lang=xml
+    
+    // Les paramètres peuvent être passés par la méthode POST (à privilégier en exploitation pour la confidentialité des données) :
+    //     http://<hébergeur>/SupprimerUnUtilisateur.php
+    
+    // connexion du serveur web à la base MySQL 
+    include_once ('../modele/DAO.class.php');
+    $dao = new DAO();
+    
+    // Récupération des données transmises
+    
+    if ( empty ($_REQUEST ["pseudo"]) == true)  $pseudo = "";  else   $pseudo = $_REQUEST ["pseudo"];
+    if ( empty ($_REQUEST ["mdp"]) == true)  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdp"];
+    if ( empty ($_REQUEST ["idTrace"]) == true)  $idTrace = "";  else   $idTrace = $_REQUEST ["idTrace"];
+    if ( empty ($_REQUEST ["dateHeure"]) == true)  $dateHeure = "";  else   $dateHeure = $_REQUEST ["dateHeure"];
+    if ( empty ($_REQUEST ["latitude"]) == true)  $latitude = "";  else   $latitude = $_REQUEST ["latitude"];
+    if ( empty ($_REQUEST ["longitude"]) == true)  $longitude = "";  else   $longitude = $_REQUEST ["longitude"];
+    if ( empty ($_REQUEST ["altitude"]) == true)  $altitude = "";  else   $altitude = $_REQUEST ["altitude"];
+    if ( empty ($_REQUEST ["rythmeCardio"]) == true)  $rythmeCardio = "";  else   $rythmeCardio = $_REQUEST ["rythmeCardio"];
+    if ( empty ($_REQUEST ["lang"]) == true) $lang = "";  else $lang = strtolower($_REQUEST ["lang"]);
+     
+    $idRelatif = 0;
+    
+    // "xml" par défaut si le paramètre lang est absent ou incorrect
+    if ($lang != "json") $lang = "xml";
+    // Contrôle de la présence des paramètres
+    if ( $pseudo == "" || $mdpSha1 == "" || $idTrace == "" || $dateHeure == "" || $latitude == "" || $longitude == "" || $altitude == "" || $rythmeCardio == "" )
+    {	
+        $msg = "Erreur : données incomplètes.";
+    } 
     else
-    {	// contrôle d'existence de la trace
-        $uneTrace = $dao->getUneTrace($idTrace);
-        if ($uneTrace == null)
-        {  $msg = "Erreur : le numéro de trace n'existe pas.";
-        }
+    {	
+        if ($dao->getNiveauConnexion($pseudo, $mdpSha1) == 0)
+        {  
+            $msg = "Erreur : authentification incorrecte.";
+        }   
         else
-        {   // vérifie si la trace correspond a l'utilisateur
-            $unUtilisateur = $dao->getUnUtilisateur($pseudo);
-            $idUtilisateur = $unUtilisateur->getId();
-            $idUserTrace = $uneTrace->getIdUtilisateur();
+        {	
+            $unUtilisateur = $dao->getUnUtilisateur($pseudo);       
+            $uneTrace = $dao->getUneTrace($idTrace);
             
-            if ($idUserTrace != $idUtilisateur)
-            {	$msg = "Erreur : le numéro de trace ne correspond pas à cet utilisateur.";
+            if ($uneTrace == null)
+            {  
+                $msg = "Erreur : le numéro de trace n'existe pas.";
             }
             else
-            {
-                // envoi de la position
-                $valueIdPoint = sizeof($uneTrace->getLesPointsDeTrace()) + 1;
-               
-                $lePointDeTrace = new PointDeTrace($idTrace, $valueIdPoint, $latitude, $longitude, $altitude, $dateHeure, $rythmeCardio, 0, 0, 0);
-                
-                
-                $ok = $dao->creerUnPointDeTrace($lePointDeTrace);
-                if ( ! $ok ) {
-                    //$valueIdPoint = 0;
-                    $msg = "Erreur : problème lors de l'enregistrement.";
+            {   
+                if ($uneTrace->getIdUtilisateur() != $unUtilisateur->getId())
+                {
+                    $msg = "Erreur : le numéro de trace ne correspond pas à cet utilisateur.";
                 }
-                else {
-                    $msg = "Point créé.";
-                    
+                else 
+                {
+                    if($uneTrace->getTerminee()==1)
+                    {
+                        $msg = "Erreur : trace terminée.";
+                    }
+                    else
+                    {
+                        $idRelatif = sizeof($uneTrace->getLesPointsDeTrace())+1;
+                        $unPoint = new PointDeTrace($idTrace,$idRelatif, $latitude, $longitude, $altitude, $dateHeure, $rythmeCardio, 0, 0, 0);
+                        $ok = $dao->creerUnPointDeTrace($unPoint);
+                        if ( $ok == false ) 
+                        {
+                            $msg = "Erreur : problème lors de l'enregistrement du point.";
+                        }
+                        else 
+                        {
+                            $msg = "Point créé.";
+                        }
                     }
                 }
             }
         }
     }
-// ferme la connexion à MySQL
-unset($dao);
-// création du flux en sortie
-if ($lang == "xml") {
-    creerFluxXML($msg, $valueIdPoint);
-}
-else {
-    creerFluxJSON($msg, $valueIdPoint);
-}
-// fin du programme (pour ne pas enchainer sur la fonction qui suit)
-exit;
-// création du flux XML en sortie
-function creerFluxXML($msg, $valueId)
-{	
-    /*
-            <?xml version="1.0" encoding="UTF-8"?>
-            <data>
-              <reponse>Point créé.</reponse>
-              <donnees>
-                  <id>6</id>
-              </donnees>
-            </data>
-    */
+    // ferme la connexion à MySQL
+    unset($dao);
     
-    // crée une instance de DOMdocument (DOM : Document Object Model)
-    $doc = new DOMDocument();
-    
-    // specifie la version et le type d'encodage
-    $doc->version = '1.0';
-    $doc->encoding = 'UTF-8';
-    
-    // crée un commentaire et l'encode en UTF-8
-    $elt_commentaire = $doc->createComment('Service web EnvoyerPosition - BTS SIO - Lycée De La Salle - Rennes');
-    // place ce commentaire à la racine du document XML
-    $doc->appendChild($elt_commentaire);
-    
-    // crée l'élément 'data' à la racine du document XML
-    $elt_data = $doc->createElement('data');
-    $doc->appendChild($elt_data);
-    
-    // place l'élément 'reponse' dans l'élément 'data'
-    $elt_reponse = $doc->createElement('reponse', $msg);
-    $elt_data->appendChild($elt_reponse);
-    
-    if ($valueId != 0){
-        $elt_donnees = $doc->createElement('donnees');
-        $elt_data->appendChild($elt_donnees);
-    
-        $elt_id = $doc->createElement('id', $valueId);
-        $elt_donnees->appendChild($elt_id);
-    }
-    // Mise en forme finale
-    $doc->formatOutput = true;
-    
-    // renvoie le contenu XML
-    echo $doc->saveXML();
-    return;
-}
-// création du flux JSON en sortie
-function creerFluxJSON($msg, $valueId)
-{
-    /* Exemple de code JSON
-        {
-            "data": {
-                "reponse": "Point créé."
-                "donnees": {
-                    "id": 7
-                }
-            }
-        }
-     */
-    
-    if ($valueId != 0){
-        $elt_id = ["id" => $valueId];
-        $elt_data = ["reponse" => $msg, "donnees" => $elt_id];
+    // création du flux en sortie
+    if ($lang == "xml") {
+        creerFluxXML($msg,$idRelatif);
     }
     else {
-        $elt_data = ["reponse" => $msg];
+        creerFluxJSON($msg,$idRelatif);
     }
     
-    // construction de la racine
-    $elt_racine = ["data" => $elt_data];
+    // fin du programme (pour ne pas enchainer sur la fonction qui suit)
+    exit;
     
     
     
+    // création du flux XML en sortie
+    function creerFluxXML($msg,$idRelatif)
+    {	// crée une instance de DOMdocument (DOM : Document Object Model)
+        $doc = new DOMDocument();
+        
+        // specifie la version et le type d'encodage
+        $doc->version = '1.0';
+        $doc->encoding = 'UTF-8';
+        
+        // crée un commentaire et l'encode en UTF-8
+        $elt_commentaire = $doc->createComment('Service web EnvoyerPosition - BTS SIO - Lycée De La Salle - Rennes');
+        // place ce commentaire à la racine du document XML
+        $doc->appendChild($elt_commentaire);
+        
+        // crée l'élément 'data' à la racine du document XML
+        $elt_data = $doc->createElement('data');
+        $doc->appendChild($elt_data);
+        
+        // place l'élément 'reponse' dans l'élément 'data'
+        $elt_reponse = $doc->createElement('reponse', $msg);
+        $elt_data->appendChild($elt_reponse);
+        
+        // place l'élément 'donnees' dans l'élément 'data'
+        $elt_donnees = $doc->createElement('donnees');
+        $elt_data->appendChild($elt_donnees);
+        
+        if($idRelatif != 0)
+        {
+            // crée un élément vide 'id'
+            $elt_id = $doc->createElement('id',$idRelatif);
+            // place l'élément 'id' dans l'élément 'donnees'
+            $elt_donnees->appendChild($elt_id);
+        }
+        
+        
+        // Mise en forme finale
+        $doc->formatOutput = true;
+        
+        // renvoie le contenu XML
+        echo $doc->saveXML();
+        return;
+    }
     
-    // retourne le contenu JSON (l'option JSON_PRETTY_PRINT gère les sauts de ligne et l'indentation)
-    echo json_encode($elt_racine, JSON_PRETTY_PRINT);
-    return;
-}
+    // création du flux JSON en sortie
+    function creerFluxJSON($msg,$idRelatif)
+    {
+        /* Exemple de code JSON
+         {
+         "data": {
+         "reponse": "Erreur : authentification incorrecte."
+         }
+         }
+         */
+        if($idRelatif != 0)
+        { 
+            // construction de l'élément "data"
+            $elt_data = ["reponse" => $msg, "donnees" => $idRelatif];
+        }
+        else
+        {
+            // construction de l'élément "data"
+            $elt_data = ["reponse" => $msg];
+        }
+        // construction de la racine
+        $elt_racine = ["data" => $elt_data];
+        
+        // retourne le contenu JSON (l'option JSON_PRETTY_PRINT gère les sauts de ligne et l'indentation)
+        echo json_encode($elt_racine, JSON_PRETTY_PRINT);
+        return;
+    }
 ?>

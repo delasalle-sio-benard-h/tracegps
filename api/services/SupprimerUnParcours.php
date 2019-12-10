@@ -1,68 +1,109 @@
 <?php
+// Projet TraceGPS - services web
+// fichier : api/services/SupprimerUnUtilisateur.php
+// Dernière mise à jour : 3/7/2019 par Jim
+
+// Rôle : ce service permet à un administrateur de supprimer un utilisateur (à condition qu'il ne possède aucune trace enregistrée)
+// Le service web doit recevoir 4 paramètres :
+//     pseudo : le pseudo de l'administrateur
+//     mdp : le mot de passe hashé en sha1 de l'administrateur
+//     pseudoAsupprimer : le pseudo de l'utilisateur à supprimer
+//     lang : le langage du flux de données retourné ("xml" ou "json") ; "xml" par défaut si le paramètre est absent ou incorrect 
+// Le service retourne un flux de données XML ou JSON contenant un compte-rendu d'exécution
+
+// Les paramètres doivent être passés par la méthode GET :
+//     http://<hébergeur>/tracegps/api/SupprimerUnUtilisateur?pseudo=admin&mdp=ff9fff929a1292db1c00e3142139b22ee4925177&pseudoAsupprimer=oxygen&lang=xml
+
 // connexion du serveur web à la base MySQL
-include_once ('../modele/DAO.class.php');
 $dao = new DAO();
+
 // Récupération des données transmises
-// la fonction $_GET récupère une donnée passée en paramètre dans l'URL par la méthode GET
-// la fonction $_POST récupère une donnée envoyées par la méthode POST
-// la fonction $_REQUEST récupère par défaut le contenu des variables $_GET, $_POST, $_COOKIE
-if ( empty ($_REQUEST ["pseudo"]) == true)  $pseudo = "";  else   $pseudo = $_REQUEST ["pseudo"];
-if ( empty ($_REQUEST ["mdpSha1"]) == true)  $mdpSha1 = "";  else   $mdpSha1 = $_REQUEST ["mdpSha1"];
-if ( empty ($_REQUEST ["idTrace"]) == true)  $idTrace = "";  else   $idTrace = $_REQUEST ["idTrace"];
-if ( empty ($_REQUEST ["lang"]) == true) $lang = "";  else $lang = strtolower($_REQUEST ["lang"]);
+$pseudo = ( empty($this->request['pseudo'])) ? "" : $this->request['pseudo'];
+$mdpSha1 = ( empty($this->request['mdp'])) ? "" : $this->request['mdp'];
+$idTrace = ( empty($this->request['idTrace'])) ? "" : $this->request['idTrace'];
+$lang = ( empty($this->request['lang'])) ? "" : $this->request['lang'];
+
 // "xml" par défaut si le paramètre lang est absent ou incorrect
 if ($lang != "json") $lang = "xml";
-$uneTrace = null;
-// Contrôle de la présence des paramètres
-if ( $pseudo == "" || $mdpSha1 == "" || $idTrace == "")
-{	$msg = "Erreur : données incomplètes.";
+ 
+// La méthode HTTP utilisée doit être GET
+if ($this->getMethodeRequete() != "GET")
+{	$msg = "Erreur : méthode HTTP incorrecte.";
+    $code_reponse = 406;
 }
-else
-{	// il faut être un utilisateur pour consulter un parcours
-    if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 )
-    {   $msg = "Erreur : authentification incorrecte.";
+else 
+{
+    // Les paramètres doivent être présents
+    if ( $pseudo == "" || $mdpSha1 == "" || $idTrace == "" )
+    {	$msg = "Erreur : données incomplètes.";
+        $code_reponse = 400;
     }
     else
-    {
-        $uneTrace = $dao->getUneTrace($idTrace);
-        if ($uneTrace == null)
-        {	$msg = "Erreur : parcours inexistant.";
+    {	// il faut être administrateur pour supprimer un utilisateur
+        if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 )
+        {   $msg = "Erreur : authentification incorrecte.";
+            $code_reponse = 401;
         }
         else
-        {   $unUtilisateur = $dao->getUnUtilisateur($pseudo);
-            $idUtilisateur = $unUtilisateur->getId();
-            $idUserTrace = $uneTrace->getIdUtilisateur();
-            
-            if ($idUserTrace != $idUtilisateur)
-            {	$msg = "Erreur : vous n'êtes pas le propriétaire de ce parcours.";
+        {	// contrôle d'existence de pseudoAsupprimer
+            $unParcours = $dao->getUneTrace($idTrace);
+            if ($unParcours == null)
+            { 
+                $msg = "Erreur : Parcours inexistant.";
+                $code_reponse = 400;
             }
             else
-            {
-                $ok = $dao->supprimerUneTrace($uneTrace);
-                if ($ok == false)
-                {    $msg = "Erreur : problème lors de la suppression du parcours.";
+            {   // si ce parcours possède encore des points de traces, sa suppression est refusée
+                if ($dao->getUnUtilisateur($pseudo)->getId() != $unParcours->getIdUtilisateur())
+                {
+                    $msg = "Erreur : vous n'êtes pas le propriétaire de ce parcours.";
+                    $code_reponse = 400;
                 }
-                else
-                {   $msg = "Parcours supprimé.";
+                else 
+                {
+                    // suppression du parcours dans la BDD
+                    $ok = $dao->supprimerUneTrace($idTrace);
+                   
+                    if ( ! $ok ) 
+                    {
+                        $msg = "Erreur : problème lors de la suppression du parcours.";
+                        $code_reponse = 500;
+                    }
+                    else 
+                    {
+                        // tout a fonctionné
+                        $msg = "Parcours supprimé.";
+                        $code_reponse = 200;
+                    }
                 }
             }
         }
     }
 }
-// ferme la connexion à MySQL
+// ferme la connexion à MySQL :
 unset($dao);
+
 // création du flux en sortie
 if ($lang == "xml") {
-    creerFluxXML($msg);
+    $content_type = "application/xml; charset=utf-8";      // indique le format XML pour la réponse
+    $donnees = creerFluxXML($msg);
 }
 else {
-    creerFluxJSON($msg);
+    $content_type = "application/json; charset=utf-8";      // indique le format Json pour la réponse
+    $donnees = creerFluxJSON($msg);
 }
-// fin du programme (pour ne pas enchainer sur la fonction qui suit)
+
+// envoi de la réponse HTTP
+$this->envoyerReponse($code_reponse, $content_type, $donnees);
+
+// fin du programme (pour ne pas enchainer sur les 2 fonctions qui suivent)
 exit;
-function creerFluxXML($msg) {
-    
-    // crée une instance de DOMdocument (DOM : Document Object Model)
+
+// ================================================================================================
+
+// création du flux XML en sortie
+function creerFluxXML($msg)
+{	// crée une instance de DOMdocument (DOM : Document Object Model)
     $doc = new DOMDocument();
     
     // specifie la version et le type d'encodage
@@ -70,7 +111,7 @@ function creerFluxXML($msg) {
     $doc->encoding = 'UTF-8';
     
     // crée un commentaire et l'encode en UTF-8
-    $elt_commentaire = $doc->createComment('Service web GetUnParcoursEtSesPoints - BTS SIO - Lycée De La Salle - Rennes');
+    $elt_commentaire = $doc->createComment('Service web SupprimerUnUtilisateur - BTS SIO - Lycée De La Salle - Rennes');
     // place ce commentaire à la racine du document XML
     $doc->appendChild($elt_commentaire);
     
@@ -80,17 +121,28 @@ function creerFluxXML($msg) {
     
     // place l'élément 'reponse' dans l'élément 'data'
     $elt_reponse = $doc->createElement('reponse', $msg);
-    $elt_data->appendChild($elt_reponse);       
+    $elt_data->appendChild($elt_reponse);
     
     // Mise en forme finale
     $doc->formatOutput = true;
     
     // renvoie le contenu XML
-    echo $doc->saveXML();
-    return;
+    return $doc->saveXML();
 }
+
+// ================================================================================================
+
+// création du flux JSON en sortie
 function creerFluxJSON($msg)
 {
+    /* Exemple de code JSON
+     {
+     "data": {
+     "reponse": "Erreur : authentification incorrecte."
+     }
+     }
+     */
+    
     // construction de l'élément "data"
     $elt_data = ["reponse" => $msg];
     
@@ -98,6 +150,8 @@ function creerFluxJSON($msg)
     $elt_racine = ["data" => $elt_data];
     
     // retourne le contenu JSON (l'option JSON_PRETTY_PRINT gère les sauts de ligne et l'indentation)
-    echo json_encode($elt_racine, JSON_PRETTY_PRINT);
-    return;
+    return json_encode($elt_racine, JSON_PRETTY_PRINT);
 }
+
+// ================================================================================================
+?>

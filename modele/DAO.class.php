@@ -104,7 +104,7 @@ class DAO
         // traitement de la réponse
         $reponse = 0;
         if ($uneLigne) {
-        	$reponse = $uneLigne->niveau;
+            $reponse = $uneLigne->niveau;
         }
         // libère les ressources du jeu de données
         $req->closeCursor();

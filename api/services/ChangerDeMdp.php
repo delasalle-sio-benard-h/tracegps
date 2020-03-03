@@ -31,7 +31,7 @@ if ($lang != "json") $lang = "xml";
 // La méthode HTTP utilisée doit être GET
 if ($this->getMethodeRequete() != "GET")
 {	$msg = "Erreur : méthode HTTP incorrecte.";
-    $code_reponse = 406;
+$code_reponse = 406;
 }
 else {
     // Les paramètres doivent être présents
@@ -45,36 +45,36 @@ else {
             $code_reponse = 400;
         }
         else {
-        	if ( $nouveauMdp != $confirmationMdp ) {
-        	    $msg = "Erreur : le nouveau mot de passe et sa confirmation sont différents.";
-        	    $code_reponse = 400;
-        	}
-        	else {
-        		if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 ) {
-        			$msg = "Erreur : authentification incorrecte.";
-        			$code_reponse = 401;
-        		}
-        		else {
-        			// enregistre le nouveau mot de passe de l'utilisateur dans la bdd après l'avoir codé en sha1
-        		    $ok = $dao->modifierMdpUtilisateur ($pseudo, $nouveauMdp);
-        		    if ( ! $ok ) {
-        		        $msg = "Erreur : problème lors de l'enregistrement du mot de passe.";
-        		        $code_reponse = 500;
-        		    }
-        		    else {
-        		        // envoie un courriel  à l'utilisateur avec son nouveau mot de passe 
-        		        $ok = $dao->envoyerMdp ($pseudo, $nouveauMdp);
-        		        if ( ! $ok ) {
-            			    $msg = "Enregistrement effectué ; l'envoi du courriel  de confirmation a rencontré un problème.";
-            			    $code_reponse = 500;
-        		        }
-        		        else {
-            			    $msg = "Enregistrement effectué ; vous allez recevoir un courriel de confirmation.";
-            			    $code_reponse = 200;
-        		        }
-        		    }
-        		}
-        	}
+            if ( $nouveauMdp != $confirmationMdp ) {
+                $msg = "Erreur : le nouveau mot de passe et sa confirmation sont différents.";
+                $code_reponse = 400;
+            }
+            else {
+                if ( $dao->getNiveauConnexion($pseudo, $mdpSha1) == 0 ) {
+                    $msg = "Erreur : authentification incorrecte.";
+                    $code_reponse = 401;
+                }
+                else {
+                    // enregistre le nouveau mot de passe de l'utilisateur dans la bdd après l'avoir codé en sha1
+                    $ok = $dao->modifierMdpUtilisateur ($pseudo, $nouveauMdp);
+                    if ( ! $ok ) {
+                        $msg = "Erreur : problème lors de l'enregistrement du mot de passe.";
+                        $code_reponse = 500;
+                    }
+                    else {
+                        // envoie un courriel  à l'utilisateur avec son nouveau mot de passe
+                        $ok = $dao->envoyerMdp ($pseudo, $nouveauMdp);
+                        if ( ! $ok ) {
+                            $msg = "Enregistrement effectué ; l'envoi du courriel  de confirmation a rencontré un problème.";
+                            $code_reponse = 500;
+                        }
+                        else {
+                            $msg = "Enregistrement effectué ; vous allez recevoir un courriel de confirmation.";
+                            $code_reponse = 200;
+                        }
+                    }
+                }
+            }
         }
     }
 }
